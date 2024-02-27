@@ -1,0 +1,148 @@
+﻿@page "/ProductionOffice"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Response;
+@layout MainLayout;
+
+
+
+
+<div class="container-fluid mt-5">
+
+    <ProductionOfficeModal @ref="productionOfficeModal" OnStatusChanged="HandleStatusChanged"
+                           OnStatusChangedUpdate="HandleStatusChangedUpdated"></ProductionOfficeModal>
+
+
+
+
+     <GenericSearchModal OnStatusUserChanged="HandleUserSelectedChanged" @ref="genericSearchModal"
+                        ConfigurationInUse="1"
+                        multipleSelection=false
+                        showCopiesColumn=false
+                        Title="Administración - Oficinas Productoras - Buscador de usuarios"></GenericSearchModal>
+
+ 
+
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-8">
+            <h1>Administración - Oficinas Productoras </h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary " BtnDisabled="@isEnable" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+
+
+       
+        </div>
+    </div>
+
+
+    <div class="input-container">
+        <label for="input2">Seleccione una Unidad Administrativa <span class="red">*</span></label>
+    </div>
+
+
+    <div class="input-container">
+
+        <TelerikDropDownList Data="@administrativeUnitsList"
+                             ValueField="AdministrativeUnitId"
+                             Value="idAdUnit"
+                             TextField="Name"
+                             ValueChanged="@((int newValue) => OnDropDownValueChanged(newValue))">
+
+        </TelerikDropDownList>
+
+    </div>
+
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+
+            <TelerikGrid Data="productionOfficesList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit( (ProductionOfficesDtoResponse)  args.Item  ))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((ProductionOfficesDtoResponse)  args.Item  ))"></GridCommandButton>
+
+
+                    </GridCommandColumn>
+                    <GridColumn Field="@nameof(ProductionOfficesDtoResponse.Code)"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(ProductionOfficesDtoResponse.Name)"
+                                Title="Nombre de la Oficina"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(ProductionOfficesDtoResponse.AdministrativeUnitName)"
+                                Title="Unidad Administrativa"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(ProductionOfficesDtoResponse.BossName)"
+                                Title="Jefe"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(ProductionOfficesDtoResponse.ActiveState)"
+                                Title="Estado"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap">
+
+                        <Template>
+                            @{
+                                ProductionOfficesDtoResponse rowData = (ProductionOfficesDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = ( rowData.ActiveState );
+                                    string active = activeState ? "Activo" : "Inactivo";
+                                    @active
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+
+       @if (dataChargue)
+    {
+        <PaginationComponent ObjectMeta="@meta" T="ProductionOfficesDtoResponse" M="ProductionOfficeFilterDtoRequest" Filter="@productionByFilter" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+
+    
+
+
+</div>
+<NotificationsComponentModal @ref="modalNotification" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+<NotificationsComponentModal @ref="notificationModalSucces"></NotificationsComponentModal>

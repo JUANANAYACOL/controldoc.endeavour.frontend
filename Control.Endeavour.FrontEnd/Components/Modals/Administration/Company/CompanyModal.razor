@@ -1,0 +1,122 @@
+﻿
+<div class="my-modal">
+    <TelerikRootComponent>
+
+        <GenericModalComponent Title="Administración - Datos de la Organización" IsVisible="modalStatus" OnModalClosed="HandleModalClosed" Width="60%">
+            <ChildContent>
+                <div class="container-fluid">
+                    <div class="row p-2">
+                        <div class="col-lg-4">
+                            <label for="input2" class="mb-2">Logo de la Organización:</label>
+                            <div class="card">
+                                <img src="@logoPictureSrc" class="card__img" alt="Logo">
+                                <DragAndDropTemplateComponent IdInputElement="logo-picture" AllowedExtensions="@AllowedExtensions" MaxFileSizeMB="@FileSize" 
+                                MaxFileCount="1" TypeOfFiles="TypeOfFilesEnum.Logo" OnFileListChanged="HandleLogoPicture"></DragAndDropTemplateComponent>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="input2" class="mb-2">Banner de la Organización:</label>
+                            <div class="card">
+                                <img src="@bannerPictureSrc" class="card__img" alt="Banner">
+                                <DragAndDropTemplateComponent IdInputElement="banner-picture" AllowedExtensions="@AllowedExtensions" MaxFileSizeMB="@FileSize" 
+                                MaxFileCount="1" TypeOfFiles="TypeOfFilesEnum.Banner" OnFileListChanged="HandleBannerPicture"></DragAndDropTemplateComponent>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container mt-1">
+                        <!-- Sección 1 -->
+                        <div class="row">
+                            <div class="col-lg-12 container">
+                                <div class="row mt-3">
+                                    <div class="col-lg-4">
+                                        <label for="input2" class="mb-2">Tipo de Documento<span class="red">*</span></label>
+                                        <TelerikDropDownList Data="@documentTypeTDIJ"
+                                                             Id="DocTypeJ"
+                                                             DefaultText="@textTDIJ"
+                                                             TextField="Value"
+                                                             ValueField="Code"
+                                                             @bind-Value="identificationType"
+                                                             Filterable="true"
+                                                             FilterOperator="StringFilterOperator.Contains">
+                                        </TelerikDropDownList>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="NIT" @bind-InputValue="@CompaniesFormResponse.Identification" IsRequired="true" LabelText="NIT" Placeholder="Número de NIT" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="namebussiness" @bind-InputValue="@CompaniesFormResponse.BusinessName" IsRequired="true" LabelText="Razón social" Placeholder="Razón social" FieldType="InputModalTypeEnum.NotEmpty" />
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="phone" @bind-InputValue="@CompaniesFormResponse.PhoneNumber" IsRequired="true" LabelText="Teléfono" Placeholder="Teléfono" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="email" @bind-InputValue="@CompaniesFormResponse.Email" IsRequired="true" LabelText="Correo electrónico" Placeholder="Correo electrónico" FieldType="InputModalTypeEnum.Email" />
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="web" @bind-InputValue="@CompaniesFormResponse.WebAddress" IsRequired="true" LabelText="Página web" Placeholder="Página web" FieldType="InputModalTypeEnum.Website" />
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-lg-8 mt-1">
+                                        <div class="row">
+                                            <ButtonGroupComponent LabelText="Dirección:" InputPlaceholder="Agregar dirección" BtnTitle="Agregar dirección" @bind-InputValue="textAddress" InputRequired="true" BtnClassColor="btnStyle--primary" BtnClassModifiers="" BtnIcon="fa-solid fa-plus" BtnOnClick="OpenNewModal"></ButtonGroupComponent>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 2 -->
+                        <div class="row mt-5">
+                            <h3>Datos del representante legal</h3>
+                            <div class="col-lg-12 container mt-3">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label for="input2" class="mb-2">Tipo de Documento <span class="red">*</span></label>
+                                        <TelerikDropDownList Data="@documentTypeTDIN"
+                                                             Id="DocTypeN"
+                                                             DefaultText="@textTDIN"
+                                                             TextField="Value"
+                                                             ValueField="Code"
+                                                             @bind-Value="legalAgentIdType"
+                                                             Filterable="true"
+                                                             FilterOperator="StringFilterOperator.Contains">
+                                        </TelerikDropDownList>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="identification" @bind-InputValue="@CompaniesFormResponse.LegalAgentId" IsRequired="true" LabelText="Número de identificación" Placeholder="Número de identificación" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="nameAgentLegal" @bind-InputValue="@CompaniesFormResponse.LegalAgentFullName" IsRequired="true" LabelText="Nombre completo" Placeholder="Nombre completo" FieldType="InputModalTypeEnum.None" />
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-lg-4">
+                                        <InputModalComponent IsVisible=true @ref="cellphone" @bind-InputValue="@CompaniesFormResponse.CellPhoneNumber" IsRequired="true" LabelText="Celular" Placeholder="Número de celular" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="from-group from-group--margin-top justify-content-center">
+                            <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="HandleValidSubmit"></ButtonComponent>
+                        </div>
+                    </div>
+                </div>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

@@ -1,0 +1,112 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Adjuntos" IsVisible="modalStatus" Width="65%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <div class="row">
+                    <TelerikTabStrip PersistTabContent="true" @bind-ActiveTabIndex="@ActiveTabIndex">
+                        <TabStripTab Title="Adjunstos">
+                            <div class="col-2">
+                                <div class="d-flex flex-column">
+                                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Agregar Adjunto" BtnIcon="fa-solid fa-plus" BtnDisabled="SeenAttachments" BtnOnClick="OpenNewModalAttachment"></ButtonComponent>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex justify-content-around">
+                                <div class="card row mt-3 col-12">
+                                    <div class="col-12 d-flex flex-column justify-content-around copy-pt">
+                                        <div class="table-responsive custom-table-container-copy">
+                                            <table class="table custom-table custom-table-container-copy">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Archivo</th>
+                                                        <th hidden="@SeenAttachments">Eliminar</th>
+                                                        <th hidden="@SeenAttachments">Firmar</th>
+                                                        <th>Adjuntos</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var fileInfo in AttachmentList)
+                                                    {
+                                                        <tr>
+                                                            <td class="table-pt">
+                                                                <div class="d-flex justify-content-space-evely table-content">
+                                                                    <i title="Mostrar" class="fa-solid fa-file-lines action-button"></i>
+                                                                </div>
+                                                            </td>
+                                                            <td hidden="@SeenAttachments" class="table-pt">
+                                                                <div class="d-flex justify-content-space-evely table-content">
+                                                                    <i title="Eliminar" @onclick="@(() => DeleteAttachments(fileInfo))" class="fa-solid fa-trash-can action-button"></i>
+                                                                </div>
+                                                            </td>
+                                                            <td hidden="@SeenAttachments" class="table-pt">
+                                                                <div class="d-flex justify-content-space-evely table-content">
+                                                                    <i title="Firmar" class="fa-solid fa-file-signature action-button"></i>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <AttachmentCardComponent ArchiveName="@fileInfo?.ArchiveName"
+                                                                                         ExibitCodeName="@fileInfo?.ExibitCodeName"
+                                                                                         AttDescription="@fileInfo?.AttDescription"
+                                                                                         CreateUser="@fileInfo?.CreateUser"
+                                                                                         CreateDate="@fileInfo?.CreateDate">
+                                                                </AttachmentCardComponent>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex flex-row justify-content-center mt-4">
+                                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Aceptar" BtnIcon="fa-solid fa-check" BtnDisabled="SeenAttachments" BtnOnClick="(e) => HandleModalClosed(false)"></ButtonComponent>
+                                </div>
+                            </div>
+                        </TabStripTab>
+                        <TabStripTab Title="Adjuntos eliminados">
+                            <div class="col-2">
+                            </div>
+                            <div class="col-12">
+                                <div class="card row mt-3 col-12">
+                                    <div class="col-12 d-flex flex-column justify-content-around copy-pt">
+                                        <div class="table-responsive custom-table-container-copy">
+                                            <table class="table custom-table custom-table-container-copy">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Archivo</th>
+                                                        <th>Adjuntos</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var fileInfo in AttachmentDeleteList)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex justify-content-space-evely mt-5 table-content">
+                                                                    <i title="Mostrar" class="fa-solid fa-file-lines action-button"></i>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <AttachmentCardComponent ArchiveName="@fileInfo?.ArchiveName"
+                                                                                         ExibitCodeName="@fileInfo?.ExibitCodeName"
+                                                                                         AttDescription="@fileInfo?.AttDescription"
+                                                                                         CreateUser="@fileInfo?.CreateUser"
+                                                                                         CreateDate="@fileInfo?.CreateDate">
+                                                                </AttachmentCardComponent>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </TabStripTab>
+                    </TelerikTabStrip>
+                </div>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

@@ -1,0 +1,225 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+
+        <GenericModalComponent Title="Administración - Dirección" IsVisible=ModalStatus Width="50%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Parte Izquierda: Input y Label -->
+                        <div class="col-lg-12">
+                            <div class="input-container">
+                                <label for="input1">Dirección</label>
+                            </div>
+                            <div class="input-container">
+                                <textarea class="w-100 address-container" id="direccion" name="direccion" placeholder="" @bind="address" @oninput="ActualizarDireccion" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 container mt-3">
+                            <div class="d-md-flex flex-md-column justify-content-md-evenly">
+
+                                <!-- Primera fila con un DropDownList, "St Number" y "St Letter" -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Via<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@scTypeList"
+                                                @bind-Value="@stType"
+                                                                     Id="stType"
+                                                                     DefaultText="@textStType"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="stNumber" @bind-InputValue="addressDtoRequest.StNumber" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="St Número" Placeholder="St Número" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="stLetter" @bind-InputValue="addressDtoRequest.StLetter" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="St Letra" Placeholder="St Letra" FieldType="InputModalTypeEnum.Name" />
+                                        </div>
+                                    </div>
+
+                                <!-- Segunda fila con tres inputs llamados "BIS", "St Complement" y "St Cardinality" -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                            <div class="input-container">
+                                                <label for="bisInput2" class="mb-2">St BIS</label>
+                                            </div>
+                                            <div class="input-container">
+                                                <label> <TelerikSwitch @bind-Value="@stBis" OnChange="ActualizarDireccion" />  @(stBis ? "Activo" : "Inactivo")</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="stComplement" @bind-InputValue="addressDtoRequest.StComplement" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="St Complemento" Placeholder="St Complemento" FieldType="InputModalTypeEnum.Name" />
+                                        </div>
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">St Cardinalidad<span class="darkred">*</span></label>
+                                                <TelerikDropDownList Data="@cardinalityList"
+                                                @bind-Value="@stCardinality"
+                                                                     Id="stCardinality"
+                                                                     DefaultText="@textStCardinality"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                    </div>
+
+                                <!-- Tercer fila con un DropDownList, "Cr Number" y "Cr Letter" -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Via<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@scTypeList"
+                                                @bind-Value="@crType"
+                                                                     Id="crType"
+                                                                     DefaultText="@textCrType"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="crNumber" @bind-InputValue="addressDtoRequest.CrNumber" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="Cr Número" Placeholder="Cr Número" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="crLetter" @bind-InputValue="addressDtoRequest.CrLetter" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="Cr Letra" Placeholder="Cr Letra" FieldType="InputModalTypeEnum.Name" />
+                                        </div>
+                                    </div>
+
+                                <!-- Cuarta fila con tres inputs llamados "BIS", "Cr Complement" y "Cr Cardinality" -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                            <div class="input-container">
+                                                <label for="bisInput2" class="mb-2">Cr BIS</label>
+                                            </div>
+                                            <div class="input-container">
+                                                <label class="mb-2">
+                                                    <TelerikSwitch @bind-Value="@crBis" OnChange="ActualizarDireccion" />  @(crBis ? "Activo" : "Inactivo")
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="crComplement" @bind-InputValue="addressDtoRequest.CrComplement" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="Cr Complemento" Placeholder="Cr Complemento" FieldType="InputModalTypeEnum.Name" />
+                                        </div>
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">St Cardinalidad<span class="darkred">*</span></label>
+                                                <TelerikDropDownList Data="@cardinalityList"
+                                                @bind-Value="@crCardinality"
+                                                                     Id="crCardinality"
+                                                                     DefaultText="@textCrCardinality"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                    </div>
+
+                                <!-- Quinta fila con un DropDownList HouseType, HouseClass y un input "HouseNumber" -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Tipo de Casa<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@houseTypeList"
+                                                @bind-Value="@houseType"
+                                                                     Id="houseType"
+                                                                     DefaultText="@textHouseType"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Clase de Casa<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@houseClassList"
+                                                @bind-Value="@houseClass"
+                                                                     Id="houseClass"
+                                                                     DefaultText="@textHouseClass"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     OnChange="ActualizarDireccion"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <InputModalComponent IsVisible=true @ref="houseNumber" @bind-InputValue="addressDtoRequest.HouseNumber" MethodValueChanged="ActualizarDireccion" IsRequired="false" LabelText="Número de vivienda" Placeholder="Número de vivienda" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                        </div>
+                                    </div>
+
+                                <!-- Sexta fila con un DropDownList Country, State y City -->
+                                <div class="row mt-3">
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Pais<span class="darkred">*</span></label>
+                                                <TelerikDropDownList Data="@countryList"
+                                                @bind-Value="@country"
+                                                                     Id="country"
+                                                                     DefaultText="@textCountry"
+                                                                     TextField="Name"
+                                                                     ValueField="CountryId"
+                                                                     Filterable="true"
+                                                                     OnChange="GetState"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Departamento<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@stateList"
+                                                @bind-Value="@state"
+                                                                     Id="state"
+                                                                     DefaultText="@textState"
+                                                                     TextField="Name"
+                                                                     ValueField="StateId"
+                                                                     Filterable="true"
+                                                                     OnChange="GetCity"
+                                                                     Enabled="@EnabledDepartamento"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                        </div>
+                                        <div class="col-lg-4">
+                                                <label for="input2" class="mb-2">Municipio<span class="darkred">*</span></label>
+                                            
+                                                <TelerikDropDownList Data="@cityList"
+                                                @bind-Value="@city"
+                                                                     Id="city"
+                                                                     DefaultText="@textCity"
+                                                                     TextField="Name"
+                                                                     ValueField="CityId"
+                                                                     Filterable="true"
+                                                                     Enabled="@EnabledMunicipio"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                            </div>
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="from-group from-group--margin-top justify-content-center">
+                            <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="HandleValidSubmit"></ButtonComponent>
+                        </div>
+                    </div>
+                </div>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

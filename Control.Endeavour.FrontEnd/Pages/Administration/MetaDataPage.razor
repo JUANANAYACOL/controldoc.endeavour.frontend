@@ -1,0 +1,211 @@
+﻿@page "/MetaData"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.MetaField.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.MetaField.Response;
+@layout MainLayout
+
+<div class="container-fluid mt-5">
+
+
+    <MetaDataModal @ref="modalMetaFields" OnStatusChanged="HandleModalClose"></MetaDataModal>
+
+
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-9">
+            <h1>Administración - MetaDatos</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-3 text-end">
+
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+
+        </div>
+    </div>
+
+
+
+
+    <div class=" row">
+        <div class="col-lg-3">
+            <InputModalComponent @ref="codeInput" @bind-InputValue="code" LabelText="Codigo" Placeholder="Codigo del MetaCampo" />
+        </div>
+        <div class="col-lg-3">
+
+            <InputModalComponent @ref="nameInput" @bind-InputValue="name" LabelText="Nombre" Placeholder="Nombre del MetaCampo" />
+
+        </div>
+        <div class="col-lg-3">
+            <label>Tipo </label>
+            <TelerikDropDownList Data="@systemParamList"
+                                 ValueField="Code"
+                                 Value="@fieldTypeCode"
+                                 TextField="Value"
+                                 ValueChanged="@( (string newValue) => GetFieldTypeCode(newValue) )"
+                                 Enabled="true"
+                                 Filterable="true"
+                                 DefaultText="Seleccione un tipo..."
+                                 Class="mt-2">
+            </TelerikDropDownList>
+        </div>
+        <div class=" col-lg-3 ">
+
+            <div class="from-group from-group--margin-top justify-content-center">
+
+                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="OnClickReset"></ButtonComponent>
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OnClickSearch"></ButtonComponent>
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row mt-4">
+        <div class="col">
+
+            <TelerikGrid Data="MetaFields" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit( (MetaFieldsDtoResponse) args.Item ))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((MetaFieldsDtoResponse) args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.NameMetaField)"
+                                Title="Nombre"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.FieldTypeValue)"
+                                Title="Tipo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.Code)"
+                                Title="Codigo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.Mandatory)"
+                                Title="Obligatorio"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap">
+
+                        <Template>
+                            @{
+                                MetaFieldsDtoResponse rowData = (MetaFieldsDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = (bool)( rowData.Mandatory ?? false );
+                                    string active = activeState ? "Aplica" : "No Aplica";
+                                    @active
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.Anonymization)"
+                                Title="Anonimo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap">
+
+                        <Template>
+                            @{
+                                MetaFieldsDtoResponse rowData = (MetaFieldsDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = (bool)(rowData.Anonymization??false);
+                                    string active = activeState ? "Aplica" : "No Aplica";
+                                    @active
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.TopographicLocation)"
+                                Title="Localizacion topografica"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap">
+
+                        <Template>
+                            @{
+                                MetaFieldsDtoResponse rowData = (MetaFieldsDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = (bool)( rowData.TopographicLocation ?? false );
+                                    string active = activeState ? "Aplica" : "No Aplica";
+                                    @active
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.ActiveState)"
+                                Title="Estado"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap">
+
+                        <Template>
+                            @{
+                                MetaFieldsDtoResponse rowData = (MetaFieldsDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = rowData.ActiveState;
+                                    string active = activeState ? "Activo" : "Inactivo";
+                                    @active
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.CreateUser)"
+                                Title="Usuario Grabo"
+                                Width="250px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="@nameof(MetaFieldsDtoResponse.CreateDate)"
+                                Title="Fecha Grabo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+
+                </GridColumns>
+            </TelerikGrid>
+
+        </div>
+    </div>
+
+
+    @if (dataChargue)
+    {
+        <PaginationComponent ObjectMeta="@meta" T="MetaFieldsDtoResponse" M="MetaFieldsFilterDtoRequest" Filter="@metaFieldByFilter" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+
+
+
+
+</div>
+<NotificationsComponentModal @ref="modalNotification" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+<NotificationsComponentModal @ref="notificationModalSucces"></NotificationsComponentModal>

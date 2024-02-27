@@ -1,0 +1,145 @@
+﻿@page "/CreateDocumentaryTask"
+@layout MainLayout
+
+<div class="container-fluid mt-1">
+
+    <div class="row titulo">
+        <div class="col-11">
+            <h3>Creación de Documentos</h3>
+        </div>
+    </div>
+
+    <div class="row d-flex align-items-center">
+        <FormatMasterListModal @ref="formatMasterListModal" OnStatusChanged="HandleSelectedFile"></FormatMasterListModal>
+        <div class="col-lg-2 panelDoc">
+            <div class="row">
+                <div class="col-xl-2 d-flex justify-content-center align-items-center pasos-mgt">
+                    <div class="numero"><h2>1</h2></div>
+                </div>
+                <div class="col-xl-10 panelDoc">
+                    <h5 class="panelDoc__Titulo">Seleccionar Plantilla</h5>
+                    @* <label class="panelDoc__Comentario">Selección y creación de plantilla</label> *@
+                    <div class="d-flex justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Seleccionar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="ShowFormatMasterModal"></ButtonComponent>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (panel_2)
+        {
+            <div class="col-lg-2 panelDoc">
+                <DocumentClasificationModal @ref="documentClasificationModal" OnStatusChangedUser="HandleStatusChangedReciver"
+                                            OnStatusChangedTRD="HandleStatusChangedTRD" ChangeModal="HandleSelectedModal" DocClasification="HandleDocumentClasification"></DocumentClasificationModal>
+
+                <GenericSearchModal @ref="genericSearchModal1" ConfigurationInUse=changeModal multipleSelection=true showCopiesColumn=false Title="@modalTitle"
+                                    OnStatusMultipleUsersChanged="HandleReciversUserChanged" OnStatusChangedMultipleSelection="HandleReciversThirdParyChanged"></GenericSearchModal>
+
+                <GenericDocTypologySearchModal @ref="genericDocTypologySearchModal" title="Tabla de Retencion Documental" OnStatusChanged="HandleTRDSelectedChanged"></GenericDocTypologySearchModal>
+                <div class="row">
+                    <div class="col-xl-2 d-flex justify-content-center align-items-center pasos-mgt">
+                        <div class="numero"><h2>2</h2></div>
+                    </div>
+                    <div class="col-xl-10 panelDoc">
+                        <h5 class="panelDoc__Titulo">Clasificar documento</h5>
+                        @* <label class="panelDoc__Comentario">Selección y creación de plantilla</label> *@
+                        <div class="d-flex justify-content-center">
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Clasificar" BtnIcon="fa-solid fa-list-check" BtnOnClick="ShowDocClasificationModal"></ButtonComponent>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (panel_3)
+        {
+            <div class="col-lg-2 panelDoc">
+                <div class="row">
+                    <div class="col-xl-2 d-flex justify-content-center align-items-center pasos-mgt">
+                        <div class="numero"><h2>3</h2></div>
+                    </div>
+                    <div class="col-xl-10">
+                        <h5 class="panelDoc__Titulo">Acción a realizar</h5>
+                        @* <label class="panelDoc__Comentario">Selección y creación de plantilla</label> *@
+                        <div class="d-flex justify-content-center">
+                            <TelerikDropDownList Data="@systemFieldsTAINSList"
+                                                 Value="@ProcessCode"
+                                                 Id="CD_Action"
+                                                 Width="150px"
+                                                 DefaultText="Acción"
+                                                 TextField="Value"
+                                                 ValueField="FieldCode"
+                                                 Filterable="true"
+                                                 ValueChanged="@( (string newValue) => CallAction(newValue) )">
+                            </TelerikDropDownList>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (panel_4)
+        {
+            <div class="col-lg-2 panelDoc">
+                <SendDocumentModal @ref="sendDocumentsModal" OnStatusChangedUser="HandleStatusChangedUser" OnStatusChanged="HandleSendDocuments"></SendDocumentModal>
+
+                <GenericSearchModal @ref="genericSearchModal2" ConfigurationInUse="1" multipleSelection=false showCopiesColumn=false
+                                    Title="Buscador de Usuarios" OnStatusUserChanged="HandleUserChanged"></GenericSearchModal>
+                <div class="row">
+                    <div class="col-xl-2 d-flex justify-content-center align-items-center pasos-mgt">
+                        <div class="numero"><h2>4</h2></div>
+                    </div>
+                    <div class="col-xl-10 panelDoc">
+                        <h5 class="panelDoc__Titulo">@panelTitle</h5>
+                        @* <label class="panelDoc__Comentario">Selección y creación de plantilla</label> *@
+                        <div class="d-flex justify-content-center">
+                            @if (panelTitle.Equals("Enviar"))
+                            {
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="@panelButton" BtnIcon="fa-solid fa-paper-plane" BtnOnClick="ShowSendDocsModal"></ButtonComponent>
+                            }
+                            else
+                            {
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="@panelButton" BtnIcon="fa-solid fa-pen-to-square" BtnOnClick="CreateDocumentTask"></ButtonComponent>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (panel_3)
+        {
+            
+            <div class="col-lg-4">
+
+                <CopiesModal @ref="copyModal" OnStatusChangedUser="HandleStatusChangedUserCopys" ChangeModal="HandleSelectedModal" OnStatusChanged="HandleCopys"></CopiesModal>
+                <GenericSearchModal @ref="genericSearchModal3" ConfigurationInUse=changeModal
+                                    multipleSelection=true showCopiesColumn=false Title="@modalTitle" OnStatusMultipleUsersChanged="HandleUsersChanged"
+                                    OnStatusChangedMultipleSelection="HandleThirdPartyChanged"></GenericSearchModal>
+                <DocumentRelationModal @ref="docRelationModal" OnStatusChanged="HandleDocumentRelation"></DocumentRelationModal>
+                <AttachmentsModal @ref="attachmentsModal" OnStatusChanged="HandleAttachmentList"></AttachmentsModal>
+
+                <div class="row d-flex align-items-center pasos-mgt">
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Vincular" BtnIcon="fa-solid fa-link" BtnOnClick="ShowDocRelationModal"></ButtonComponent>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Copias" BtnIcon="fa-regular fa-copy" BtnOnClick="ShowCopiesModal"></ButtonComponent>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Archivar" BtnIcon="fa-solid fa-file-zipper"></ButtonComponent>
+                    </div>
+                    <div class="col-md-3 d-flex justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Adjuntar" BtnIcon="fa-solid fa-paperclip" BtnOnClick="ShowAttachmentModal"></ButtonComponent>
+                    </div>
+                </div>
+            </div>
+        }       
+    </div>
+    <div class="row text-center p-5">
+        @if (panel_2)
+        {
+            <SecondPasswordModal @ref="modalSecondPass" OnStatusChanged="HandleValidatePasswordAsync"></SecondPasswordModal>
+            <DxRichEdit @ref="@richEditControl" CustomizeRibbon="OnCustomizeRibbon" DocumentContentChanged="OnDocumentContentChanged" />
+        }
+    </div>
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleNotiCloseModal"></NotificationsComponentModal>
+<NotificationsComponentModal @ref="notificationModal2" OnModalClosed="HandleSecondNotiCloseModal"></NotificationsComponentModal>

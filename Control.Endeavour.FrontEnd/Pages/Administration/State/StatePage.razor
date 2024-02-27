@@ -1,0 +1,98 @@
+﻿@page "/State"
+@layout MainLayout
+@* State *@
+
+<StateModal @ref="modalState" Country="@IdPaises" OnChangeData="HandleRefreshGridDataAsync"></StateModal>
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Departamentos</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+    </div>
+</div>
+
+<!-- Parte 3: DropdownList Telerik -->
+
+<div class="row">
+
+    <div class="row">
+        <div class="col-4 input-container">
+            <label for="input2" style="margin-bottom:6px;">Seleccione un país: <span class="red">*</span></label>
+            <TelerikDropDownList Data="@PaisesList"
+                                 @bind-Value="@IdPaises"
+                                 TextField="Name"
+                                 ValueField="CountryId"
+                                 DefaultText="Seleccione un país..."
+                                 OnChange="GetState"
+                                 Filterable="true"
+                                 FilterOperator="StringFilterOperator.Contains">
+            </TelerikDropDownList>
+
+        </div>
+
+        <div class="col-8 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10 mt-3" BtnType="button" BtnText="Crear" BtnDisabled="isEnabled" BtnOnClick="ShowModalAdd" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">         
+
+            <TelerikGrid Data="DepartamentosList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                       <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit(args.Item as StateDtoResponse))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete(args.Item as StateDtoResponse))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="CodeNum"
+                                Title="Codigo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CodeTxt"
+                                Title="Diminutivo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CountryId"
+                                Title="CountryId"
+                                Visible="false"
+                                Width="0"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                </GridColumns>
+                <NoDataTemplate>
+                    <strong>No Data available / The data is still loading...</strong>
+                </NoDataTemplate>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    <NotificationsComponentModal @ref="notificationModalSucces"></NotificationsComponentModal>
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    <PaginationComponent @ref="paginationComponetPost" Valid="true" ObjectMeta="meta" M="StateDtoRequest" T="StateDtoResponse" Headers="CountryHeader" OnGetPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+
+
+
+</div>

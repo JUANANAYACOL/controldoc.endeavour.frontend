@@ -1,0 +1,110 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+
+        <GenericModalComponent Title="Adjuntos" IsVisible="@modalStatus" OnModalClosed="HandleModalClosed" Width="70%">
+            <ChildContent>
+                    <div class="p-4">
+                        <div class="row mt-3">
+                            <div class="col-md-5 pe-5">
+                                <div class="d-flex">
+                                    <div class="align-items-end flex-fill">
+                                        <label class="mt-2 mb-1">Tipo <span class="red">*</span></label>
+                                        <TelerikDropDownList Data="@systemFieldsList"
+                                                             ValueField="FieldCode"
+                                                             Value="@AttachmentType"
+                                                             TextField="Value"
+                                                             Filterable="true"
+                                                             DefaultText="Tipo de anexo"
+                                                             ValueChanged="@((string newValue) => AttachmentType = newValue)">
+                                        </TelerikDropDownList>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 mb-3">
+                                    <InputModalComponent LabelText="Código" IsDisabled="false" IsVisible="true" InputMaxLength="5" Placeholder="Ingresa el código del adjunto" @bind-InputValue="@CodeInput"></InputModalComponent>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="mb-1">Detalle<span class="red">* </span><span class="span-gray">(@contadorcarac carateres de 500)</span></label>
+                                    <textarea @bind="DescriptionInput" class="w-100 custom-textarea" placeholder="Informacion del trámite. Máx 500 caracteres" required maxlength="500" oninput="@ContarCaracteres"></textarea>
+                                </div>
+
+                                <div class="d-flex justify-content-center px-5 mt-3"> 
+                                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="resetModal"></ButtonComponent>
+                                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Adjuntar" BtnIcon="fa-solid fa-upload" BtnOnClick="HandleAttachment" BtnDisabled="@DisableBtnAdjuntar"></ButtonComponent>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <DragAndDropFilesComponent FileInfos="@fileDataList" OnFileListChanged="HandleFilesList" ValidationField="upFile"></DragAndDropFilesComponent>
+                                </div>
+                            </div>
+                            
+                    @if (Type == GenericType)
+                    {
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card row mt-3 col-12">
+                                    <div class="col-12 d-flex flex-column justify-content-around attachment-pt">
+                                        <div class="table-responsive custom-table-container-att">
+                                            <table class="table custom-table custom-table-container-att">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Eliminar</th>
+                                                        <th>Tipo</th>
+                                                        <th>Detalle</th>
+                                                        <th>Nombre</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var fileInfo in filingAttachments)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex justify-content-space-evely mt-3 table-content">
+                                                                    <i title="Eliminar" @onclick="@(() => HandleDeleteAttachment(fileInfo))" class="fa-solid fa-trash-can delete-button"></i>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex justify-content-space-evely mt-4 table-content">
+                                                                    <label>@fileInfo.ExhibitCode</label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex justify-content-space-evely mt-4 table-content">
+                                                                    <label>@fileInfo.AttDescription</label>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex justify-content-space-evely mt-4 table-content">
+                                                                    <label>@fileInfo.ArchiveName</label>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                @if (filingAttachments.Any())
+                                {
+                                    isEnableActionButton = false;
+                                }
+                                else
+                                {
+                                    isEnableActionButton = true;
+                                }
+                                <div class="col-3 mt-3 d-flex justify-content-center">
+                                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Aceptar" BtnIcon="fa-solid fa-check" BtnDisabled="isEnableActionButton" BtnOnClick="HandleSendAttachments"></ButtonComponent>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                        
+                    </div>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+</div>

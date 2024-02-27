@@ -1,0 +1,84 @@
+﻿@page "/Country"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Country.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Country.Request
+@layout MainLayout
+@* Country *@
+
+<CountryModal @ref="modalCountry" OnChangeData="HandleRefreshGridDataAsync"></CountryModal>
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Países</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="ShowModalAdd" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+</div>
+
+<!-- Parte 3: Grid Telerik -->
+
+<div class="row">
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="PaisesList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit(args.Item as CountryDtoResponse))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete(args.Item as CountryDtoResponse))"></GridCommandButton>
+                    </GridCommandColumn>
+                    
+                    <GridColumn Field="CodeNum"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CodeTxt"
+                                Title="Diminutivo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CodeLanguage"
+                                Title="Codigo lenguaje"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+
+
+                </GridColumns>
+                <NoDataTemplate>
+                    <strong>No Data available / The data is still loading...</strong>
+                </NoDataTemplate>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    <PaginationComponent @ref="paginationComponetPost" Valid="true" ObjectMeta="meta" T="CountryDtoResponse" M="CountryDtoRequest" OnGetPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    <NotificationsComponentModal @ref="notificationModalSucces" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+
+</div>
+
+

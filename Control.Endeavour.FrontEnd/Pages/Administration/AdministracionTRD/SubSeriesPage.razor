@@ -1,0 +1,93 @@
+﻿@page "/SubSeries"
+@layout MainLayout;
+
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Request
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Response
+<div class="container-fluid mt-5">
+    <SubSeriesModal @ref="modalSubseries" SerieID="@IdSerie" NameSerie="@NameSerie" OnStatusUpdate="HandleChangedData"></SubSeriesModal>
+
+
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-8">
+            <h1>Administración - Subseries documentales</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnDisabled="@isEnabled" BtnOnClick="ShowModalCreate" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+    <div class="input-container">
+        <label for="input2">Seleccione una Serie: <span class="red">*</span></label>
+    </div>
+    <div class="input-container">
+        <TelerikDropDownList Data="@seriesList"
+                             ValueField="SeriesId"
+                             Value="@IdSerie"
+                             TextField="Name"
+                             ValueChanged="@( (int newValue) => OnDropDownValueChanged(newValue) )">
+        </TelerikDropDownList>
+        
+
+    </div>
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+
+            <TelerikGrid Data="subSeriesList" PageSize="@metasubSeries.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit(args.Item as SubSeriesDtoResponse))"></GridCommandButton>
+                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete(args.Item as SubSeriesDtoResponse))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="SubSeriesId"
+                                Title="ID"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="SeriesName"
+                                Title="Serie"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Code"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre de la Oficina"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ActiveState"
+                                Title="Estado"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    @if (dataChargue)
+    {
+        <PaginationComponent @ref="PaginationComponet" ObjectMeta="@metasubSeries" T="SubSeriesDtoResponse" M="SubSeriesFilterDtoRequest" Filter="@SubSeriesFilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    
+</div>

@@ -1,0 +1,22 @@
+﻿.root {
+    --color-btnPrimary: #2196F3;
+}
+#txtAInformation {
+    height: 100% !important;
+    border: none;
+    color: var(--color-btnPrimary);
+    text-transform: uppercase;
+}
+
+.table-info {
+    justify-content: space-evenly !important;
+}
+
+.delete-button {
+    cursor: pointer;
+    font-size: 25px;
+    color: #41BAEA;
+}
+.darkred {
+    color: red;
+}

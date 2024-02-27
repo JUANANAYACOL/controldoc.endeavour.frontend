@@ -1,0 +1,93 @@
+﻿@page "/Series"
+@layout MainLayout;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Request
+<div class="container-fluid mt-5">
+    <SeriesModal @ref="modalSeries" ProOfficeID="@IdproOffice" ProOfficeName="@NameproOffice" OnStatusUpdate="HandleChangedData"></SeriesModal> 
+
+
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Series documentales</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnDisabled="@isEnabled" BtnOnClick="ShowModalCreate" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+    <div class="input-container">
+        <label for="input2">Seleccione una Oficina Productora: <span class="red">*</span></label>
+    </div>
+    <div class="input-container">
+        <TelerikDropDownList Data="@productionOfficesList"
+                             ValueField="ProductionOfficeId"
+                             Value="@IdproOffice"
+                             TextField="Name"
+                             DefaultText="Oficina productora"
+                             ValueChanged="@( (int newValue) => OnDropDownValueChanged(newValue) )">
+        </TelerikDropDownList>
+    </div>
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+     
+            <TelerikGrid Data="@seriesList" PageSize="seriesMeta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((SeriesDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((SeriesDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="SeriesId"
+                                Title="ID"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ProductionOfficeName"
+                                Title="Oficina Productora"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Code"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre de la Oficina"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ActiveState"
+                                Title="Estado"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    @if (dataChargue)
+    {
+        <PaginationComponent @ref="PaginationComponet" ObjectMeta="@seriesMeta" T="SeriesDtoResponse" M="SeriesFilterDtoRequest" Filter="@seriesFilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    
+
+</div>

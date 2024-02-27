@@ -1,0 +1,130 @@
+﻿<TelerikRootComponent>
+
+    <GenericModalComponent Title="Bandeja de anulación - Nueva solicitud" IsVisible="modalStatus" OnModalClosed="HandleModalClosed" Width="70%">
+        <ChildContent>
+
+
+
+            <div class="row">
+                <div class="col-4">
+                    <label>Tipo de Anulación<span class="darkred">*</span></label>
+                    <TelerikDropDownList Data="@ReasonCodeList"
+                                         @bind-Value="@cancelationReasonId"
+                                         TextField="Value"
+                                         ValueField="Code"
+                                         DefaultText="@DTTReasonCode"
+                                         Filterable="true"
+                                         OnChange="GetTypeCode"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-4">
+                    <label>Tipo de solicitud<span class="darkred">*</span></label>
+
+                    <TelerikDropDownList Data="@TypeCodeList"
+                                         @bind-Value="@typecode"
+                                         TextField="Value"
+                                         ValueField="Code"
+                                         DefaultText="@DTTypeCode"
+                                         Enabled="@habilitarTypeCode"
+                                         Filterable="true"
+                                         OnChange="GetReason"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-4">
+                    <label>Motivo anulación<span class="darkred">*</span></label>
+                    <TelerikDropDownList Data="@overrideTrayReasons"
+                                         Value="@Reason"
+                                         TextField="NameReason"
+                                         ValueField="CancelationReasonId"
+                                         DefaultText="@DTTReason"
+                                         Enabled="habilitarReason"
+                                         Filterable="true"
+                                         ValueChanged="@((int newValue) => Reason = newValue)"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-5">
+                    <textarea class="w-100 custom-textarea"
+                              id="txtAInformation"
+                              placeholder="@txtAInformation"
+                              required maxlength="500" readonly>
+                        </textarea>
+
+                </div>
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <InputModalComponent IsRequired="true" InputType="number" LabelText="Documento" Placeholder="@PHInput" @bind-InputValue="@controlId" MethodValueChanged="CaptureIdControl" />
+                        </div>
+                        <div class="col-md-3 text-end mt-4">
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnDisabled="@BtnVerificarDisabled" BtnType="button" BtnText="Verificar" BtnIcon="fa fa-check-circle" BtnOnClick="NewModalValidation"></ButtonComponent>
+
+                        </div>
+                        <div class="col-md-3 text-end mt-4">
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Agregar" BtnIcon="fa fa-plus " BtnOnClick="AddListControlId"></ButtonComponent>
+
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <label>Prueba de anulación<span class="darkred">*</span></label>
+
+                        <DragAndDropTemplateComponent IdInputElement="OverrideTray" OnFileListChanged="HandleFilesList" MaxFileSizeMB="100" MaxFileCount="5" AllowedExtensions="@ext"></DragAndDropTemplateComponent>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-around table-info @ShowTable">
+                    <table class="table custom-table custom-table-container-copy">
+                        <thead>
+                            <tr>
+                                <th>Eliminar</th>
+                                <th>Control Id</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var id in ListId)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex justify-content-center table-content">
+                                            <i @onclick="@(() => DeleteControlID(id))" class="fa-solid fa-trash-can delete-button"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label>@id</label>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+            </div>
+            <div class="row align-self-center mt-5">
+                <!-- Parte Derecha: Dos Botones -->
+                <div class="col">
+                    <div class="text-center">
+
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="reset"></ButtonComponent>
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="PostRequest"></ButtonComponent>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+
+        </ChildContent>
+    </GenericModalComponent>
+</TelerikRootComponent>
+
+<OverrideTrayValidationModal @ref="_ModalOverrideTrayValidation" controlId="@intControlId"></OverrideTrayValidationModal>

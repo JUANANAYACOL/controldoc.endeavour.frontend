@@ -1,0 +1,150 @@
+﻿@page "/ThirdParty"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.ThirdParty.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.ThirdUser.Response
+@layout MainLayout;
+
+
+<ThirdPartyModal @ref="modalThirdParty" OnStatusChanged="HandleStatusChanged" OnIdSaved="HandleId" OnResetForm="HandleForm" OnChangeData="HandleRefreshGridData"></ThirdPartyModal>
+<AddressModal @ref="modalAddress" OnStatusChangedMultipleSelection="HandleUserSelectedChanged"></AddressModal>
+<div class="container-fluid mt-5">
+    
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-9">
+            <h1>Administración - Personas Naturales y Jurídicas</h1>
+        </div>
+        <div class="col-lg-3 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <div class="row pt-4">
+
+        <!-- Contenedor para los Tres Inputs -->
+        
+        <div class="col-lg-3">
+                    <label class="text-filter" for="names">@((currentTab==0) ? "Nombres" : "Razón Social")</label>
+                    <input class="fieldStyle fieldStyle--primaryInLine w-100" type="text" id="names" @bind-value="names" placeholder="Nombres">
+                </div>
+        
+        <div class="col-lg-3">
+                    <label class="text-filter" for="email">Correo electrónico</label>
+                    <input class="fieldStyle fieldStyle--primaryInLine w-100" type="text" id="email" @bind-value="email" placeholder="Correo electrónico">
+                </div>
+        
+        <div class="col-lg-3">
+                    <label class="text-filter" for="identification">Número de identificación</label>
+                    <input class="fieldStyle fieldStyle--primaryInLine w-100" type="text" id="identification" @bind-value="identification" placeholder="Número de identificación">
+                </div>
+        <!-- Contenedor para los Tres Botones -->
+        <div class="col-lg-3">
+            <div class="from-group mt-4 justify-content-center">
+                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Limpiar" BtnOnClick="ResetFiltersAsync" BtnIcon="fa-solid fa-eraser"></ButtonComponent>
+                
+                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Buscar" BtnOnClick="ApplyFiltersAsync" BtnIcon="fa-solid fa-magnifying-glass"></ButtonComponent>
+                
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikTabStrip ActiveTabIndexChanged="@TabChangedHandler" >
+                @foreach (var tabItem in tabs)
+                {
+                    <TabStripTab Title="@tabItem.Title">
+                        <Content>
+                            <div class="row mt-4">
+                                <div class="col">
+                                    <TelerikGrid Data="@tabItem.FilteredData" PageSize="@tabItem.Meta.PageSize"
+                                                 Sortable="true"
+                                                 FilterMode="GridFilterMode.FilterMenu"
+                                                 Resizable="true"
+                                                 Reorderable="true"
+                                                 EditMode="GridEditMode.Popup"
+                                                 SelectionMode="GridSelectionMode.None">
+                                        <GridColumns>
+                                            <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                                                <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((ThirdPartyDtoResponse) args.Item))"></GridCommandButton>
+                                                <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args) => HandleRecordToDelete((ThirdPartyDtoResponse)args.Item))"></GridCommandButton>
+                                            </GridCommandColumn>
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.IdentificationTypeName) Title="Tipo de Documento" Width="100px" Filterable="true" />
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.IdentificationNumber) Title="Documento" Width="100px" Filterable="true" />
+                                            <GridColumn Field="@nameof(ThirdPartyDtoResponse.FullName)" Width="100px" Filterable="true">
+                                                    <HeaderTemplate>
+                                                    @if (tabItem.Title == "Persona Natural")
+                                                        {
+                                                        <text>Nombres y Apellidos</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>Razón Social</text>
+                                                        }
+                                                    </HeaderTemplate>
+                                                <Template>
+                                                    @{
+                                                        ThirdPartyDtoResponse rowData = (ThirdPartyDtoResponse)context;
+                                                        if (rowData != null)
+                                                        {
+                                                            if (tabItem.Title == "Persona Natural")
+                                                            {
+                                                                var valueText = rowData.FullName;
+                                                                @valueText
+                                                            }
+                                                            else
+                                                            {
+                                                                var valueText = rowData.Names;
+                                                                @valueText
+                                                            }
+                                                        }
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.ChargeName) Width="100px" Filterable="true">
+                                                <HeaderTemplate>
+                                                    @if (tabItem.Title == "Persona Natural")
+                                                    {
+                                                        <text>Cargo</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>Naturaleza</text>
+                                                    }
+                                                </HeaderTemplate>
+                                                <Template>
+                                                    @{
+                                                        ThirdPartyDtoResponse rowData = (ThirdPartyDtoResponse)context;
+                                                        if (rowData != null)
+                                                        {
+                                                            if (tabItem.Title == "Persona Natural")
+                                                            {
+                                                                var valueText = rowData.ChargeName;
+                                                                @valueText
+                                                            }
+                                                            else
+                                                            {
+                                                                var valueText = rowData.NatureName;
+                                                                @valueText
+                                                            }
+                                                        }
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.Country) Title="Pais" Width="100px" Filterable="true" />
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.StateC) Title="Departamento" Width="100px" Filterable="true" />
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.City) Title="Municipio" Width="100px" Filterable="true" />
+                                            <GridColumn Field=@nameof(ThirdPartyDtoResponse.Address) Title="Dirección" Width="100px" Filterable="true" />
+                                        </GridColumns>
+                                    </TelerikGrid>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <PaginationComponent @ref="paginationComponent" ObjectMeta="@currentMeta" T="ThirdPartyDtoResponse" M="ThirdPartyFilterDtoRequest" Filter="@FilterDtoRequest" OnPaginationRefresh="HandlePaginationGridAsync"></PaginationComponent>
+                            </div>
+                        </Content>
+                    </TabStripTab>
+                }
+            </TelerikTabStrip>
+        </div>
+    </div>
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>

@@ -1,0 +1,52 @@
+﻿@page "/ImporterTrdTvd"
+@layout MainLayout;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.ImporterTrdTvd.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.ImporterTrdTvd.Response;
+
+<ImporterTrdTvdModal @ref="modalImporterTrdTvd" OnStatusChanged="HandleStatusChanged" OnChangeData="HandleRefreshGridData" OnInfoChange="OpenNewModal" ></ImporterTrdTvdModal>
+<ImportResultModal @ref="modalImportResult" OnStatusChanged="HandleStatusChanged" CloseModals="HandleModalClosed"></ImportResultModal>
+
+<div class="container-fluid mt-5">
+    
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-8">
+            <h1>Importador TRD/TVD</h1>
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Cargar" BtnIcon="fas fa-upload" BtnOnClick="ShowModal"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="importerHistoryList" PageSize="meta!.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridColumn Field=FileId Title="Id de Archivo" Width="100px" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" Filterable="true" />
+                    <GridColumn Field=DescriptionHistory Title="Descripcion" Width="100px" Filterable="true" />
+                    <GridColumn Field=CreateUser Title="Usuario Grabo" Width="100px" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap"  Filterable="true" />
+                    <GridColumn Field=CreateDate Title="Fecha Grabo" Width="100px" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" Filterable="true" />
+
+                </GridColumns>
+            </TelerikGrid>
+
+        </div>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    <PaginationComponent @ref="PaginationComponet" ObjectMeta="@meta" T="ImporterHistoryDtoResponse" M="ImporterHistoryDtoRequest" Filter="@FilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    
+</div>
+
+<NotificationsComponentModal @ref="notificationModal"></NotificationsComponentModal>
+
+
+

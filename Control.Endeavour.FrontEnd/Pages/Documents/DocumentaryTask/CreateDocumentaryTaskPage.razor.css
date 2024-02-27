@@ -1,0 +1,56 @@
+﻿
+.pasos-mgt {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.panelDoc__Titulo {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.panelDoc__Comentario {
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.numero {
+    margin: 0px 10px 0px 10px;
+}
+
+@media (max-width: 1050px) {
+
+    .pasos-mgt {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .center-items {
+        align-items: center
+    }
+}
+
+.numero-task {
+    width: 50px;
+    height: 50px;
+    background-color: #7CDAFF;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .numero-task h2 {
+        margin: 0px;
+        font-family: Roboto;
+        font-weight: 600;
+    }
+
+.custom-table-container {
+    border: 1px;
+    border-radius: 10px;
+    overflow: auto;
+    max-height: 400px;
+}

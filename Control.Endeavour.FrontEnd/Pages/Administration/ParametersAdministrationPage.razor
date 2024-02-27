@@ -1,0 +1,91 @@
+﻿@page "/ParametersAdministration"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.SystemConfiguration.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Components.Modals.Address.Response
+@layout MainLayout;
+
+<Control.Endeavour.FrontEnd.Components.Modals.SystemConfiguration.SystemFieldsModal @ref="modalsystemFields" OnChangeData="HandleRefreshGridDatasystemFieldsAsync"></Control.Endeavour.FrontEnd.Components.Modals.SystemConfiguration.SystemFieldsModal>
+
+<div class="container-fluid mt-1">
+
+    <div class="row">
+        <div class="@Panel1Class">
+            <div class="row titulo">
+                <h4>Administración - Parámetros del sistema</h4>
+            </div>
+            <div class="row mt-3">
+                <TelerikGrid Data="systemParamsList"
+                             ScrollMode="@GridScrollMode.Scrollable"
+                             Height="680px" RowHeight="60" PageSize="@pageSizeSystemParams"
+                             Sortable="true">
+                    <GridColumns>
+
+                        <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                            <GridCommandButton Icon="@SvgIcon.Search" OnClick="@((args)=> ShowSystemFields((SystemParamsDtoResponse)args.Item))"></GridCommandButton>
+                        </GridCommandColumn>
+                        <GridColumn Field="ParamCode"
+                                    Title="Código del parámetro"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="ParamName"
+                                    Title="Nombre del parámetro"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Description"
+                                    Title="Descripción"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                    </GridColumns>
+                </TelerikGrid>
+
+            </div>
+        </div>
+        <div class="col-md-6 flex-md-column @Panel2Class">
+            <div class="row titulo">
+                <div class="col-md-8">
+                    <h4> Valores del parámetro: @systemParamName</h4>
+                </div>
+                <div class="col-md-4 text-end">
+                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" 
+                    BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+                </div>
+            </div>
+            <div class="row mt-3">
+
+                <TelerikGrid Data="systemFieldsList"
+                             ScrollMode="@GridScrollMode.Scrollable"
+                             Height="680px"
+                             RowHeight="60" PageSize="@pageSizeSystemFields"
+                             Sortable="true">
+                    <GridColumns>
+                        <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                            <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalSystemFields((SystemFieldsDtoResponse)args.Item))"></GridCommandButton>
+                            <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDeleteSystemFields((SystemFieldsDtoResponse)args.Item))"></GridCommandButton>
+                        </GridCommandColumn>
+                        <GridColumn Field="Code"
+                                    Title="Código del parámetro"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Value"
+                                    Title="Valor"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                    </GridColumns>
+                </TelerikGrid>
+
+            </div>
+        </div>
+    </div>
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose">
+
+</NotificationsComponentModal>

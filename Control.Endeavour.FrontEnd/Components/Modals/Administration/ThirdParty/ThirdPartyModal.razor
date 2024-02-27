@@ -1,0 +1,195 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title=@($"Administración - Personas {(personType == "PN" ? "Naturales" : "Jurídicas")}") IsVisible=ModalStatus Width="55%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <EditForm Model="@thirdPartyDtoResponse" OnValidSubmit="HandleValidSubmit">
+                    <div class="container-fluid">
+
+                        <div class="row">
+                            <div class="container mt-4">
+                                @if (personType == "PN")
+                                {
+                                    <!-- Persona Natural -->
+                                    <div id="Panel_natural">
+
+                                        <!-- Primera fila -->
+                                        <div class="row">
+                                            <div class="col-lg-4 mt-1">
+                                                <label for="input2" class="mb-2">Tipo de Identificación<span class="darkred">*</span></label>
+                                                <TelerikDropDownList Data="@identificationTypeList"
+                                                @bind-Value="@identificationType"
+                                                                     Id="stType"
+                                                                     DefaultText="@textIdentificationType"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                            </div>
+
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=identification @bind-InputValue="thirdPartyDtoResponse.IdentificationNumber" IsRequired="true" LabelText="Identificación" Placeholder="Ingrese la Identificación" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=names @bind-InputValue="thirdPartyDtoResponse.Names" IsRequired="true" LabelText="Nombres" Placeholder="Nombres" FieldType="InputModalTypeEnum.Name" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Segunda fila -->
+                                        <div class="row mt-2">
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=lastNames @bind-InputValue="thirdPartyDtoResponse.LastName" IsRequired="@((personType == "PN") ? true : false)" LabelText="Apellidos" Placeholder="Apellidos" FieldType="InputModalTypeEnum.Name" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=webpage @bind-InputValue="thirdPartyDtoResponse.WebPage" IsRequired="true" LabelText="Página Web" Placeholder="Página Web" FieldType="InputModalTypeEnum.Website" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=email1 @bind-InputValue="thirdPartyDtoResponse.Email1" IsRequired="true" LabelText="Email" Placeholder="Email" FieldType="InputModalTypeEnum.Email" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Tercera fila -->
+                                        <div class="row mt-2">
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=phone1 @bind-InputValue="thirdPartyDtoResponse.Phone1" IsRequired="true" LabelText="Telefono 1" Placeholder="Telefono 1" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=phone2 @bind-InputValue="thirdPartyDtoResponse.Phone2" IsRequired="false" LabelText="Telefono 2" Placeholder="Telefono 2" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <label for="input2" class="mb-2">Cargo<span class="darkred">*</span></label>
+                                                <TelerikDropDownList Data="@chargeList"
+                                                @bind-Value="@charge"
+                                                                     Id="chargeId"
+                                                                     DefaultText="@textCharge"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cuarta fila -->
+                                        <div class="row mt-3">
+                                            <div class="col-lg-8 mt-1">
+                                                <div class="row">
+                                                    <ButtonGroupComponent LabelText="Dirección:" InputPlaceholder="Agregar dirección" BtnTitle="Agregar dirección" @bind-InputValue="textAddress" InputRequired="true" BtnClassColor="btnStyle--primary" BtnClassModifiers="" BtnIcon="fa-solid fa-plus" BtnOnClick="OpenNewModal"></ButtonGroupComponent>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 mt-1 d-flex align-items-end switch">
+                                                <label> <TelerikSwitch @bind-Value="@activeState" /> @(activeState ? "Activo" : "Inactivo")</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Persona Juridica -->
+                                    <div id="Panel_juridica">
+
+                                        <!-- Primera fila -->
+                                        <div class="row">
+                                            <div class="col-lg-4 mt-1">
+                                                <label for="input2" class="mb-2">Tipo de Identificación<span class="darkred">*</span></label>
+                                                
+                                                <TelerikDropDownList Data="@identificationTypeList"
+                                                @bind-Value="@identificationType"
+                                                                     Id="stType"
+                                                                     DefaultText="@textIdentificationType"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                                
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=identification @bind-InputValue="thirdPartyDtoResponse.IdentificationNumber" IsRequired="true" LabelText="Identificación" Placeholder="Ingrese la Identificación" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=names @bind-InputValue="thirdPartyDtoResponse.Names" IsRequired="true" LabelText="Razón Social" Placeholder="Razón Social" FieldType="InputModalTypeEnum.Name" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Segunda fila -->
+                                        <div class="row mt-2">
+
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=phone1 @bind-InputValue="thirdPartyDtoResponse.Phone1" IsRequired="true" LabelText="Telefono 1" Placeholder="Telefono 1" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                                
+                                            </div>
+
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=phone2 @bind-InputValue="thirdPartyDtoResponse.Phone2" IsRequired="false" LabelText="Telefono 2" Placeholder="Telefono 2" FieldType="InputModalTypeEnum.NumbersOnly" />
+                                                
+                                            </div>
+
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=email1 @bind-InputValue="thirdPartyDtoResponse.Email1" IsRequired="true" LabelText="Email 1" Placeholder="Email 1" FieldType="InputModalTypeEnum.Email" />
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Tercera fila -->
+                                        <div class="row mt-2">
+
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=email2 @bind-InputValue="thirdPartyDtoResponse.Email2" IsRequired="false" LabelText="Email 2" Placeholder="Email 2" FieldType="InputModalTypeEnum.Email" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=webpage @bind-InputValue="thirdPartyDtoResponse.WebPage" IsRequired="true" LabelText="Página Web" Placeholder="Página Web" FieldType="InputModalTypeEnum.Website" />
+                                            </div>
+
+                                            <div class="col-lg-4 mt-1">
+                                                <label for="input2" class="mb-2">Naturaleza<span class="darkred">*</span></label>
+                                                
+                                                <TelerikDropDownList Data="@natureList"
+                                                @bind-Value="@nature"
+                                                                     Id="natureId"
+                                                                     DefaultText="@textNature"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cuarta fila -->
+                                        <div class="row mt-2">
+                                            <div class="col-lg-4 mt-1">
+                                                <InputModalComponent @ref=initials @bind-InputValue="thirdPartyDtoResponse.Initials" IsRequired="false" LabelText="Iniciales" Placeholder="Ingrese las Iniciales" FieldType="InputModalTypeEnum.Name" />
+                                            </div>
+                                            <div class="col-lg-4 mt-1 d-flex align-items-end switch">
+                                                <label> <TelerikSwitch @bind-Value="@activeState" />  @(activeState ? "Activo" : "Inactivo")</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Quinta fila -->
+                                        <div class="row mt-3">
+                                            <div class="col-lg-8 mt-1">
+                                                <div class="row">
+                                                    <ButtonGroupComponent LabelText="Dirección:" InputPlaceholder="Agregar dirección" BtnTitle="Agregar dirección" @bind-InputValue="textAddress" InputRequired="true" BtnClassColor="btnStyle--primary" BtnClassModifiers="" BtnIcon="fa-solid fa-plus" BtnOnClick="OpenNewModal"></ButtonGroupComponent>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="from-group from-group--margin-top justify-content-center">
+                                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="HandleValidSubmit"></ButtonComponent>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

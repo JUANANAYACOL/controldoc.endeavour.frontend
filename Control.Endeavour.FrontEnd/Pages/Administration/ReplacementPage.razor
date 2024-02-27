@@ -1,0 +1,58 @@
+﻿@page "/Replacement"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Replacement.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.VReplacement.Response;
+@layout MainLayout;
+
+<ReplacementModal @ref="repalcementModal" OnStatusChanged="HandleReplacementModalStatusChangedAsync" OnStatusChangedUpdate="HandleReplacementModalStatusChangedAsync"></ReplacementModal>
+<GenericSearchModal OnStatusUserChanged="HandleGenericSearchStatusChanged"  @ref="genericSearchModal"
+                    ConfigurationInUse="1"
+                    multipleSelection=false
+                    showCopiesColumn=false
+                    Title="Administración - Reemplazos - Buscador de usuarios"></GenericSearchModal>
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-10">
+            <h1>Administración - Reemplazos</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-2 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="ReplacementList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((VReplacementDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args) => HandleRecordToDelete( ( VReplacementDtoResponse)args.Item ))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.UserFullName) Title="Usuario" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.ReplacementFullName) Title="Reemplazo" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.StartDate) Title="Fecha Inicio" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.EndDate) Title="Fecha Fin" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.Reason) Title="Razón" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.CreateUser) Title="Usuario Grabó" Width="100px" Filterable="true" />
+                    <GridColumn Field=@nameof(VReplacementDtoResponse.CreateDate) Title="Fecha Grabó" Width="100px" Filterable="true" />
+                </GridColumns>
+            </TelerikGrid>
+            </div>
+    </div>
+     @if (dataChargue)
+    {
+        <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+        <PaginationComponent ObjectMeta="meta" T="VReplacementDtoResponse" M="ReplacementFilterDtoRequest" Filter="@replacementFilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiCloseAsync"></NotificationsComponentModal>
+<NotificationsComponentModal @ref="notificationModalSucces"></NotificationsComponentModal>

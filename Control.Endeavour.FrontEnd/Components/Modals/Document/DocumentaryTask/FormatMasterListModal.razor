@@ -1,0 +1,89 @@
+﻿@using Control.Endeavour.FrontEnd.Models.Models.Documents.DocumentsTask.Response
+
+<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Listado Mastro de Formatos" IsVisible="modalStatus" Width="70%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <!-- div para el filtro de busqueda-->
+                <div class="row mt-2 mx-1">
+                    <h5>Seleccione la plantilla que se cargará en el editor CeroPapel</h5>
+                </div>
+                <div class="row mt-4 mx-0 px-5 d-flex flex-row">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <InputModalComponent @ref="inputCode" @bind-InputValue="filter.Code" LabelText="Código" Placeholder="Código" IsVisible="true"></InputModalComponent>
+                        </div>
+                        <div class="mb-3">
+                            <InputModalComponent @ref="inputName" @bind-InputValue="filter.NameTemplate" LabelText="Nombre" Placeholder="Nombre" IsVisible="true"></InputModalComponent>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <InputModalComponent @ref="inputVersion" LabelText="Versión" Placeholder="Versión" IsVisible="true"></InputModalComponent>
+                        </div>
+                        <div class="mb-3">
+                            <InputModalComponent @ref="inputProcess" @bind-InputValue="filter.Process" LabelText="Proceso" Placeholder="Proceso" IsVisible="true"></InputModalComponent>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="from-group from-group--margin-top justify-content-center">
+                            <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="No usar plantilla" BtnIcon="fa-solid fa-circle-xmark" BtnOnClick="(e) => LoadFile(BasicTemplate)"></ButtonComponent>
+                            <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="ml-10" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="GetTemplateDoc"></ButtonComponent>
+                        </div>
+                    </div>
+                </div>
+                <!-- div para la grilla-->
+                <div class="row mt-3">
+                    <TelerikGrid Data="templateDocumentList"
+                                 Sortable="true"
+                                 FilterMode="GridFilterMode.FilterMenu"
+                                 ScrollMode="@GridScrollMode.Scrollable"
+                                 Height="400px"
+                                 RowHeight="60"
+                                 Resizable="true"
+                                 Reorderable="true"
+                                 EditMode="GridEditMode.Popup"
+                                 SelectionMode="GridSelectionMode.None">
+                        <GridColumns>
+                            <GridColumn Field="TempCode"
+                                        Title="Código"
+                                        Width="80px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field="TempName"
+                                        Title="Nombre Plantilla"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field="TempVersion"
+                                        Title="Versión"
+                                        Width="80px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field="Process"
+                                        Title="Proceso"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridCommandColumn Width="80px" Title="Cargar Plantilla" HeaderClass="center-wrap" Visible="true">
+                                <div class="d-flex justify-content-around">
+                                    <GridCommandButton Icon="@SvgIcon.Upload" Title="Cargar" Class="upload-button" OnClick="@((args)=> LoadFile((TemplateDocumentDtoResponse)args.Item))"></GridCommandButton>
+                                </div>
+                            </GridCommandColumn>
+                        </GridColumns>
+                    </TelerikGrid>
+                </div>
+
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>
+
+

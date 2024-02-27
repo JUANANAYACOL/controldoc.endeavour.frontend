@@ -1,0 +1,18 @@
+﻿@if (InputType == InputTypeEnum.Password || InputType == InputTypeEnum.UpdatePassword)
+{
+    <div class="input-group mb-3">
+        <input type="@inputType" @bind="inputValue" @oninput="OnInput" placeholder="@Placeholder" class="form-control custom-input" @onfocus="ResetValidation" maxlength="@Length" required />
+        <span class="input-group-text password-toggle-container align-items-center span-custom-class">
+            <i class="@iconClass" @onclick="TogglePasswordVisibility"></i>
+        </span>
+    </div>
+}
+else
+{
+    <div class="input-group white-border py-1 rounded-3">
+        <input type="@InputType" @bind="inputValue" @oninput="OnInput" placeholder="@Placeholder" class="form-control custom-input" @onfocus="ResetValidation" maxlength="@Length" required />
+    </div>
+}
+@if(ShowErrors){
+    <span class="red">@ErrorMessage</span>
+}

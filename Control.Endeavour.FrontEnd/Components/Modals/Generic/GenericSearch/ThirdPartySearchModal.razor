@@ -1,0 +1,192 @@
+﻿@using Control.Endeavour.FrontEnd.Models.Models.Administration.ThirdParty.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.ThirdUser.Response;
+
+
+<ThirdPartyModal @ref="modalThirdParty" Id="modal-ThirdParty" OnStatusChanged="HandleStatusChanged" OnIdSaved="HandleId"></ThirdPartyModal>
+<AddressModal @ref="modalAddress" Id="modal-Address" OnStatusChangedMultipleSelection="HandleUserSelectedChanged"></AddressModal>
+<div class="my-modal">
+    <div class="row mt-2">
+        <span>
+            <label class="ms-3"><TelerikSwitch Value="@searchByPN" Class="me-2" ValueChanged="( (bool newValue) => OnChangeSwitchPJ() )" /> Persona natural</label>
+            <label class="ms-3"><TelerikSwitch Value="@searchByPJ" ValueChanged="( (bool newValue) => OnChangeSwitchPN() )" /> Persona jurídica</label>
+        </span>
+    </div>
+
+    <div class="row mt-1 p-3">
+        <div class="col-lg-3">
+            <InputModalComponent @ref="inputNames" @bind-InputValue="thirdPartyFilter.Names" IsRequired="false" LabelText=@(searchByPJ ? "Razon Social" : "Nombre y/o Apellido") Placeholder="" />
+        </div>
+        <div class="col-lg-3">
+            <InputModalComponent @ref="inputIdentificcation" @bind-InputValue="thirdPartyFilter.IdentificationNumber" IsRequired="false" LabelText=@(searchByPJ ? "RUT" : "CC") Placeholder="" />
+        </div>
+        <div class="col-lg-3">
+            <InputModalComponent @ref="inputEmail" @bind-InputValue="thirdPartyFilter.Email" IsRequired="false" LabelText="Correo Electrónico" Placeholder="" />
+        </div>
+        <div class="col-lg-3">
+            <div class="from-group from-group--margin-top justify-content-center">
+                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="OnClickButtonClear"></ButtonComponent>
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OnClickButton"></ButtonComponent>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row py-3 pe-3 text-end">
+        <label>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#1b6ec2" class="bi bi-plus-circle-fill pointer" viewBox="0 0 16 16" @onclick="OnClickPlus">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+            </svg>
+            Nuevo usuario
+        </label>
+    </div>
+
+    <div class="row">
+        <TelerikGrid Data="@thirdPartyList" PageSize="@(meta.PageSize)"
+                     Sortable="true"
+                     Resizable="true"
+                     ScrollMode="@GridScrollMode.Scrollable"
+                     Height="400px"
+                     RowHeight="60"
+                     Reorderable="true">
+            <GridColumns>
+                <GridColumn Width="150px" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        <label> Seleccionar  </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var thirdPartySelected = (ThirdPartyDtoResponse)context;
+                            <TelerikCheckBox Enabled=thirdPartySelected.EnableSelection @bind-Value="@thirdPartySelected!.Selected" OnChange="@(() => changeStateThirdParty(thirdPartySelected))">
+                            </TelerikCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Visible=@(multipleSelection && showCopiesColumn) Width="150px" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        <label> Copias  </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var thirdPartySelected = (ThirdPartyDtoResponse)context;
+                            <TelerikCheckBox Enabled=thirdPartySelected.EnableCopy @bind-Value="@thirdPartySelected!.Copy" OnChange="@(() => ChangeStateThirdPartyCopies(thirdPartySelected))">
+                            </TelerikCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                    <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((ThirdPartyDtoResponse) args.Item ))"></GridCommandButton>
+                </GridCommandColumn>
+                <GridColumn Field="IdentificationNumber"
+                            Title="Identificación"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="Names"
+                            Title=@(searchByPJ ? "Razon Social" : "Nombre/Apellido")
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Width="500px" Visible="searchByPJ" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        <label> Encargados </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var thirdPartySelected = (ThirdPartyDtoResponse)context;
+                            if (thirdPartySelected!.ThirdUsers!.Any())
+                            {
+                                <TelerikGrid Data="@thirdPartySelected.ThirdUsers"
+                                             Sortable="true"
+                                             Resizable="false"
+                                             Reorderable="true">
+                                    <GridColumns>
+                                        <GridColumn Width="100px" Visible=@(!thirdPartySelected.Selected) Context="ChildContext" TextAlign="ColumnTextAlign.Center">
+                                            <HeaderTemplate>
+                                                <label> Seleccionar  </label>
+                                            </HeaderTemplate>
+                                            <Template>
+                                                @{
+                                                    var thirdUser = (ThirdUserDtoResponse)ChildContext;
+                                                    <TelerikCheckBox @bind-Value="@thirdUser!.Selected" OnChange="@(() => changeStateThirdUser(thirdUser))">
+                                                    </TelerikCheckBox>
+                                                }
+                                            </Template>
+                                        </GridColumn>
+                                        <GridColumn Width="100px" Visible=@(multipleSelection && showCopiesColumn && !thirdPartySelected.Copy) Context="ChildContext" TextAlign="ColumnTextAlign.Center">
+                                            <HeaderTemplate>
+                                                <label> Copias  </label>
+                                            </HeaderTemplate>
+                                            <Template>
+                                                @{
+                                                    var thirdUser = (ThirdUserDtoResponse)ChildContext;
+                                                    <TelerikCheckBox @bind-Value="@thirdUser!.Copy" OnChange="@(() => ChangeStateThirdUserCopies(thirdUser))">
+                                                    </TelerikCheckBox>
+                                                }
+                                            </Template>
+
+                                        </GridColumn>
+                                        <GridColumn Visible="searchByPJ"
+                                                    Field="Names"
+                                                    Title="Nombre"
+                                                    Width="150px"
+                                                    Filterable="true"
+                                                    TextAlign="ColumnTextAlign.Center"
+                                                    HeaderClass="center-wrap" />
+                                    </GridColumns>
+                                </TelerikGrid>
+                            }
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Width="300px" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        <label> Correo Electronico</label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var thirdPartySelected = context as ThirdPartyDtoResponse;
+                            <div class="col">
+                                <div class="row">
+                                    <label> @(thirdPartySelected?.Email1 ?? thirdPartySelected?.Email2)</label>
+                                </div>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Visible="searchByPJ"
+                            Field="ChargeName"
+                            Title="Cargo"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="Country"
+                            Title="Pais"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="StateC"
+                            Title="Departamento"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="City"
+                            Title="Ciudad"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+            </GridColumns>
+        </TelerikGrid>
+
+    </div>
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    @if (dataChargue)
+    {
+        <PaginationComponent ObjectMeta="@meta" T="ThirdPartyDtoResponse" M="ThirdPartyFilterDtoRequest" Filter="@thirdPartyFilter" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>

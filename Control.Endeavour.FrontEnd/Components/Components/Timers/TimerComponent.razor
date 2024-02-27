@@ -1,0 +1,13 @@
+﻿
+<div class="timer">
+    <span class="time">@timeLeft.ToString(@"mm\:ss")</span>
+    @if (isButtonDisabled)
+    {
+        <span class="resend-link disabled">@ResendButtonText</span>
+    }
+    else
+    {
+        <a href="" @onclick:preventDefault @onclick="ResendCode" class="resend-link active">@ResendButtonText</a>
+    }
+</div>
+<NotificationsComponentModal @ref="NotificationModal"></NotificationsComponentModal>

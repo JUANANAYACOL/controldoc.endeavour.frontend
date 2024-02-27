@@ -1,0 +1,625 @@
+﻿@page "/UserAdministration"
+@* @page "/"  *@
+@using Control.Endeavour.FrontEnd.Models.Enums.Components.UploadFiles
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Permission.Request
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.VUser.Request
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.VUser.Response
+
+@layout MainLayout;
+
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+<UserPermissionModal @ref="modalUserPermission" OnSendPermission="OnRecivePermissionSelected"></UserPermissionModal>
+<div class="container-fluid mt-1">
+    <div id="panel-1-user" class="row pb-30 d-flex @Panel1Class">
+        <div class="row titulo">
+            <div class="col-md-8">
+                <h3>Administración - Usuarios</h3>
+            </div>
+            <!-- Parte 2: Botón azul alineado a la derecha -->
+            <div class="col-md-4 text-end">
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="OpenCreateView" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3">
+                <InputModalComponent LabelText="Nombres" Placeholder="Ingrese los nombres" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@userNameFilter"> </InputModalComponent>
+            </div>
+            <div class="col-md-3">
+                <InputModalComponent LabelText="Apellidos" Placeholder="Ingrese los apellidos" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@userLastNameFilter"> </InputModalComponent>
+            </div>
+            <div class="col-md-3">
+                <InputModalComponent LabelText="Login" Placeholder="Ingrese el usuario" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@userLoginFilter"> </InputModalComponent>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="row w-100">
+                    <div class="col-md-6 text-md-end">
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="CleanFilter"></ButtonComponent>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="SearchButtom"></ButtonComponent>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <TelerikGrid Data="userListData" PageSize="@userMeta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None"
+                         ScrollMode="@GridScrollMode.Scrollable">
+                <GridColumns>
+
+                    <GridCommandColumn Width="10%" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        @* <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> OpenEditView((VUserDtoResponse)args.Item))"></GridCommandButton> *@
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((VUserDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="UserId"
+                                Title="ID"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="UserName"
+                                Title="Usuario"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="FirstName"
+                                Title="Nombre"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="LastName"
+                                Title="Apellido"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Charge"
+                                Title="Cargo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ProductionOfficeName"
+                                Title="Oficina Productora"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+
+        <div class="row mt-3">
+            <PaginationComponent @ref="paginationComponetPost" ObjectMeta="@userMeta" T="VUserDtoResponse" M="VUserDtoRequest" Filter="vUserFilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+        </div>
+    </div>
+    <div id="panel-1-user" class="row  d-flex @Panel2Class">
+        @* <EditForm Model="@_createUsersDtoRequest" OnValidSubmit="HandleValidSubmit"> *@
+        <div class="row justify-content-end text-center">
+            <div class="text-md-end">
+                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="ml-10 me-4" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser"></ButtonComponent>
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10 me-4" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="HandleValidSubmit"></ButtonComponent>
+                <button class="svg-button" @onclick="CloseCreateView">
+                    <img src="../img/vector.svg" />
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <TelerikTabStrip PersistTabContent="true">
+                <TabStripTab Title="Datos generales">
+                    <div class="row mb-4">
+                        <div class="card shadow-sm bg-white rounded-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="card w-100 h-100">
+                                            <img src="@profilePictureSrc" class="card-img custom-profile-pic" alt="Avatar">
+                                            <DragAndDropTemplateComponent IdInputElement="profile-picture" AllowedExtensions="@AllowedExtensions" MaxFileSizeMB="@FileSize" MaxFileCount="1" TypeOfFiles="TypeOfFilesEnum.ProfilePicture" OnFileListChanged="HandleUserProfilePicture"></DragAndDropTemplateComponent>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3"> 
+                                            <div class="mb-2">
+                                                <label class="mb-2">Tipo de documento: <span class="red">*</span></label>
+                                                <TelerikDropDownList Data="@lstDocumentType"
+                                                                     @bind-Value="@_createUsersDtoRequest.IdentificationType"
+                                                                     Id="GR_TipoDoc"
+                                                                     DefaultText="@IdentificationText"
+                                                                     TextField="Value"
+                                                                     ValueField="Code"
+                                                                     Filterable="true"
+                                                                     FilterOperator="StringFilterOperator.Contains">
+                                                </TelerikDropDownList>
+                                            </div>
+                                            <div class="mb-2">
+                                                <InputModalComponent LabelText="Numero de documento:" Placeholder="Ingrese el numero de documento" @bind-InputValue="@_createUsersDtoRequest.Identification" FieldType="InputModalTypeEnum.NumbersOnly"></InputModalComponent>
+                                            </div>
+                                            <div class="mb-2">
+                                                <InputModalComponent LabelText="Login:" Placeholder="Ingrese el login" @bind-InputValue="@_createUsersDtoRequest.UserName" FieldType="InputModalTypeEnum.Name"></InputModalComponent>
+                                            </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        
+                                        <div class="mb-2">
+                                            <InputModalComponent LabelText="Contraseña" Placeholder="Ingrese contraseña" @bind-InputValue="@_createUsersDtoRequest.Password" FieldType="InputModalTypeEnum.Name" InputType="password"></InputModalComponent>
+                                            @if (editFormUser)
+                                            {
+                                                <label class="titulo-azul"> Cambiar contraseña</label>
+                                            }
+                                        </div>
+                                        <div class="mb-2">
+                                            <InputModalComponent LabelText="Segunda contraseña" Placeholder="Ingrese segunda contraseña" @bind-InputValue="@_createUsersDtoRequest.SeccondPassword" FieldType="InputModalTypeEnum.Name" InputType="password"></InputModalComponent>
+                                            @if(editFormUser){
+                                                <label class="titulo-azul"> Cambiar Segunda contraseña</label>
+                                            }
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-2">
+                                    <InputModalComponent LabelText="ID:" Placeholder="Id del usuario" @bind-InputValue="@idUserSelected" FieldType="InputModalTypeEnum.NumbersOnly" IsDisabled=true InputType="text"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                    <InputModalComponent LabelText="Primer Nombre:" Placeholder="Ingrese primer nombre" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@_createUsersDtoRequest.FirstName" InputType="text" IsRequired="true"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                    <InputModalComponent LabelText="Segundo Nombre:" Placeholder="Ingrese segundo nombre" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@_createUsersDtoRequest.MiddleName" InputType="text" ></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                    <InputModalComponent LabelText="Apellidos:" Placeholder="Ingrese apellidos" FieldType="InputModalTypeEnum.Name" IsRequired="true" @bind-InputValue="@_createUsersDtoRequest.LastName" InputType="text"></InputModalComponent>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Correo electrónico:" Placeholder="Ingrese el correo electrónico" FieldType="InputModalTypeEnum.Email" IsRequired="true" @bind-InputValue="@_createUsersDtoRequest.Email" InputType="email"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Fecha de nacimiento:" @bind-InputValue="@birthDate" InputType="date"></InputModalComponent>
+                            </div>
+
+                            
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Número de telefono:" Placeholder="Número de telefono" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@_createUsersDtoRequest.PhoneNumber" InputType="number"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Número de celular:" Placeholder="Número de celular" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@_createUsersDtoRequest.CellPhoneNumber" InputType="number"></InputModalComponent>
+                            </div>
+                            
+                           
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-2">
+                                <label class="mb-2">Tipo de contrato: <span class="red">*</span></label>
+                                <TelerikDropDownList Data="@lstContracTypes"
+                                                     @bind-Value="@_createUsersDtoRequest.ContractType"
+                                                     Id="GR_TipoDoc"
+                                                      DefaultText="@ContracTypeText"
+                                                     TextField="Value"
+                                                     ValueField="Code"
+                                                     Filterable="true">
+                                </TelerikDropDownList>
+                            </div>
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Número de contrato:" Placeholder="Ingrese contraseña" FieldType="InputModalTypeEnum.Name" @bind-InputValue="@_createUsersDtoRequest.ContractNumber" InputType="number"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Fecha de inicio del contrato:" @bind-InputValue="@starContractDate" InputType="date"></InputModalComponent>
+                            </div>
+                            <div class="mb-2">
+                                <InputModalComponent LabelText="Fecha de finalización del contrato:" @bind-InputValue="@endContractDate" InputType="date"></InputModalComponent>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-2">
+                                <label class="mb-2">Cargo: <span class="red">*</span></label>
+                                <TelerikDropDownList Data="@lstCharguesTypes"
+                                                     @bind-Value="@_createUsersDtoRequest.ChargeCode"
+                                                     Id="GR_TipoDoc"
+                                                     DefaultText="@CharguesTypeText"
+                                                     TextField="Value"
+                                                     ValueField="Code"
+                                                     Filterable="true">
+                                </TelerikDropDownList>
+                            </div>
+                            <div class="mb-2">
+                                <label class="mb-2">Unidad Administrativa: <span class="red">*</span></label>
+                                <TelerikDropDownList Data="@lstAdministrativeUnit"
+                                                     ValueField="AdministrativeUnitId"
+                                                     Value="@ValueTipoDocumento2"
+                                                     TextField="Name"
+                                                     ValueChanged="(int newValue) => GetProducOffice(newValue)"
+                                                     Filterable="true"
+                                                     DefaultText="@AdministrativeUnitText">
+                                </TelerikDropDownList>
+                            </div>
+                            <div class="mb-2">
+                                <label class="mb-2">Oficina productora: <span class="red">*</span></label>
+                                <TelerikDropDownList Data="@lstProductionOffices"
+                                                     ValueField="ProductionOfficeId"
+                                                     @bind-Value="@_createUsersDtoRequest.ProductionOfficeId"
+                                                     TextField="Name"
+                                                     Enabled="isEnableProOfficeDrop"
+                                                     Filterable="true"
+                                                     DefaultText="@ProductionOfficesText">
+                                </TelerikDropDownList>
+                            </div>
+                            <div class="mb-2">
+                                <label class="mb-2">Sucursal: <span class="red">*</span></label>
+                                <TelerikDropDownList Data="@lstBranchOffices"
+                                                     @bind-Value="@_createUsersDtoRequest.BranchOfficeId"
+                                                     DefaultText="@BranchOfficesText"
+                                                     TextField="NameOffice"
+                                                     ValueField="BranchOfficeId"
+                                                     Filterable="true"
+                                                     FilterOperator="StringFilterOperator.Contains">
+                                </TelerikDropDownList>
+                            </div>
+                        </div>
+                    </div>
+                </TabStripTab>
+                <TabStripTab  Title="Perfiles">
+                    <UserProfilesModal @ref="modalUserProfiles" CompanyID="@companyId" OnProfilesSelected="OnProfilesSelected"></UserProfilesModal>
+                    <div class="row titulo">
+                        <div class="col-md-10">
+                            <h3>Perfiles del usuario</h3>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Añadir" BtnOnClick="AddNewProfiles" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+                        </div>
+
+                    </div>
+                       
+                    <div class="row mt-3">
+                        @if (editFormUser)
+                        {
+                            <TelerikGrid Data="@lstProfilesByUserId" PageSize="@PageSizeProfile"
+                                         Sortable="true"
+                                         FilterMode="GridFilterMode.FilterMenu"
+                                         Resizable="true"
+                                         Reorderable="true"
+                                         EditMode="GridEditMode.Popup"
+                                         SelectionMode="GridSelectionMode.None"
+                                         ScrollMode="@GridScrollMode.Scrollable">
+                                <GridColumns>
+                                    <GridColumn Field="Profile1"
+                                                Title="Nombre"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="Description"
+                                                Title="Descripción"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ActiveState"
+                                                Title="Estado"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                </GridColumns>
+                            </TelerikGrid>
+                            
+                        }
+                        else
+                        {
+                            <TelerikGrid Data="@selectedProfiles" PageSize="@selectedProfiles.Count()"
+                                         Sortable="true"
+                                         FilterMode="GridFilterMode.FilterMenu"
+                                         Resizable="true"
+                                         Reorderable="true"
+                                         EditMode="GridEditMode.Popup"
+                                         SelectionMode="GridSelectionMode.None"
+                                         ScrollMode="@GridScrollMode.Scrollable">
+                                <GridColumns>
+
+                                    <GridCommandColumn Width="10%" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash"></GridCommandButton>
+                                    </GridCommandColumn>
+                                    <GridColumn Field="Profile1"
+                                                Title="Nombre"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="Description"
+                                                Title="descripción"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ActiveState"
+                                                Title="Estado"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                </GridColumns>
+                            </TelerikGrid>
+
+                        }    
+                    </div>
+                    
+                </TabStripTab>
+                <TabStripTab Title="Permisos">
+                    <div class="row titulo">
+                        <div class="col-md-10">
+                            <h3>Permisos del usuario</h3>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Añadir" BtnOnClick="AddNewPermission" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+                        </div>
+
+                    </div>
+                    
+                    <div class="row mt-3">
+                        @if (editFormUser)
+                        {
+                            <TelerikGrid Data="@lstPermissionByUserId" PageSize="@PageSizeProfile"
+                                         Sortable="true"
+                                         FilterMode="GridFilterMode.FilterMenu"
+                                         Resizable="true"
+                                         Reorderable="true"
+                                         EditMode="GridEditMode.Popup"
+                                         SelectionMode="GridSelectionMode.None"
+                                         ScrollMode="@GridScrollMode.Scrollable">
+                                <GridColumns>
+
+                                    <GridCommandColumn Width="10%" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+
+                                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash"></GridCommandButton>
+                                    </GridCommandColumn>
+                                    <GridColumn Field="FunctionalityName"
+                                                Title="Nombre"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="AccessF"
+                                                Title="Acceso"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ModifyF"
+                                                Title="Modificar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ConsultF"
+                                                Title="Consultar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="DeleteF"
+                                                Title="Eliminar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="PrintF"
+                                                Title="Imprimir"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ActiveState"
+                                                Title="Estado"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                </GridColumns>
+                            </TelerikGrid>
+                        }
+                        else
+                        {
+                            <TelerikGrid Data="@lstUserPermissionSelected" PageSize="@lstUserPermissionSelected.Count()"
+                                         Sortable="true"
+                                         FilterMode="GridFilterMode.FilterMenu"
+                                         Resizable="true"
+                                         Reorderable="true"
+                                         EditMode="GridEditMode.Popup"
+                                         SelectionMode="GridSelectionMode.None"
+                                         ScrollMode="@GridScrollMode.Scrollable">
+                                <GridColumns>
+                                    <GridCommandColumn Width="10%" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> DeletePermission((CreatePermissionDtoRequest)args.Item))"></GridCommandButton>
+                                    </GridCommandColumn>
+                                    <GridColumn Field="FunctionalityName"
+                                                Title="Nombre"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="AccessF"
+                                                Title="Acceso"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ModifyF"
+                                                Title="Modificar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ConsultF"
+                                                Title="Consultar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="DeleteF"
+                                                Title="Eliminar"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="PrintF"
+                                                Title="Imprimir"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                    <GridColumn Field="ActiveState"
+                                                Title="Estado"
+                                                Width="150px"
+                                                Filterable="true"
+                                                TextAlign="ColumnTextAlign.Center"
+                                                HeaderClass="center-wrap" />
+                                </GridColumns>
+                            </TelerikGrid>
+                        }
+
+
+                    </div>
+                </TabStripTab>
+                <TabStripTab Title="Firmas">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma mecánica</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileFMC" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesMC" MaxFileSizeMB="@FileSize" MaxFileCount="1" OnFileListChanged="HandleFileFMC"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceMechanicalSignature))
+                                    {
+                                        <img src="@SourceMechanicalSignature" alt="Descripción alternativa" class="signature-image"/>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma rúbrica</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileFRB" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesRB" MaxFileSizeMB="@FileSize" MaxFileCount="1" OnFileListChanged="HandleFileFRB"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceSignatureHeading))
+                                    {
+                                        <img src="@SourceSignatureHeading" alt="Descripción alternativa" class="signature-image" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma Digital P12</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileFDP12" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesDP12" MaxFileSizeMB="@FileSize" MaxFileCount="1" OnFileListChanged="HandleFileFDP12"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceDigitalSignature))
+                                    {
+                                        <img src="@SourceDigitalSignature" alt="Descripción alternativa" class="signature-image"/>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </TabStripTab>
+                <TabStripTab Title="Firmas Mecánicas Adicionales">
+                    <div class="row mb-4">
+                        <h2 class="fw-bold mb-2">Firmas mecánicas adicionales</h2>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma mecánica 1</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileMCA1" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesAMC1" MaxFileSizeMB="@FileSize" OnFileListChanged="MechanicalSignatureAdditional1"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceMechanicalSignatureAdditional1))
+                                    {
+                                        <img src="@SourceMechanicalSignatureAdditional1" alt="Descripción alternativa" class="signature-image" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma mecánica 2</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileMCA2" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesAMC2" MaxFileSizeMB="@FileSize" OnFileListChanged="MechanicalSignatureAdditional2"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceMechanicalSignatureAdditional2))
+                                    {
+                                        <img src="@SourceMechanicalSignatureAdditional2" alt="Descripción alternativa" class="signature-image" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3 class="fw-bold mb-2">Firma mecánica 3</h3>
+                            <DragAndDropTemplateComponent IdInputElement="inputFileMCA3" AllowedExtensions="@AllowedExtensions" FileInfos="@lstSignaturesAMC3" MaxFileSizeMB="@FileSize" OnFileListChanged="MechanicalSignatureAdditional3"></DragAndDropTemplateComponent>
+                            <span class="text-color-red mt-2">@AlertMessage</span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-white rounded-3 h-100">
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(SourceMechanicalSignatureAdditional3))
+                                    {
+                                        <img src="@SourceMechanicalSignatureAdditional3" alt="Descripción alternativa" class="signature-image" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </TabStripTab>
+
+            </TelerikTabStrip>
+    
+            
+        </div>
+        @* </EditForm> *@
+
+    </div>
+    
+
+</div>
+
+

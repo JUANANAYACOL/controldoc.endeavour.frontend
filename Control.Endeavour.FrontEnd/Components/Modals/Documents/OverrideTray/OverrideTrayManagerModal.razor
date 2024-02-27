@@ -1,0 +1,56 @@
+﻿    
+<TelerikRootComponent>
+
+        <GenericModalComponent Title="Administracion-Gestor Anulación" IsVisible="modalStatus" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+
+                    <div class="row">
+                        <h2>Administracion-Creacion de administrador</h2>
+                        <div class="row-md-12 mt-4">
+                            <label>Selecciona un usuario..</label>
+
+                            <TelerikDropDownList Data="@UserList"
+                                                 @ref="@DLUser"
+                                                 @bind-Value="@UserId"
+                                                 TextField="UserName"
+                                                 ValueField="UserId"
+                                                 DefaultText="@DFUser"
+                                                 OnChange="GetTypeCode"
+                                                 Enabled="@HabilitarUser"
+                                                 Filterable="true"
+                                                 FilterOperator="StringFilterOperator.Contains">
+                            </TelerikDropDownList> 
+                        </div>
+                        <div class="row-md-12 mt-4">
+                            <label>Selecciona el tipo de usuario..</label>
+
+                            <TelerikDropDownList Data="@TypeCodeList"
+                                                 @ref="@DLTypeCode"
+                                                 @bind-Value="@TypeCode"
+                                                 TextField="Value"
+                                                 ValueField="Code"
+                                                 DefaultText="@DFCode"
+                                                 Filterable="true"
+                                                 Enabled="@Habilitar"
+                                                 FilterOperator="StringFilterOperator.Contains">
+                            </TelerikDropDownList>
+
+                        </div>
+                        <div class="row align-self-center mt-5">
+                            <div class="col">
+                                <div class="text-center">
+                                     <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="reset"></ButtonComponent>
+                                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="Save"></ButtonComponent>
+                             </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>

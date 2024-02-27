@@ -1,0 +1,46 @@
+﻿
+<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Enviar Documento" IsVisible="modalStatus" Width="60%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+                <div class="row send-pt">
+                    <div class="d-flex flex-row  gap-3">
+                        <div class="col-8">
+                            <ButtonGroupComponent LabelText="Destinatario" InputPlaceholder="Seleccione destinatario" BtnTitle="Buscar Destinatario" @bind-InputValue="@vUserSelected.FullName" InputRequired="true" BtnClassColor="btnStyle--primary"
+                                                  BtnClassModifiers="" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OpenNewModalUser"></ButtonGroupComponent>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column mt-4">
+                        <label class="mb-1">Instrucciones <span class="red">*</span></label>
+                        <div class="button-group gap-3 mt-3">
+                            <button class="@GetButtonClass(InstructionCodeEnum.Review)" @onclick="() => HandleSelection(InstructionCodeEnum.Review)">
+                                <span><i class="fa-solid fa-check"></i></span>
+                                @InstructionCodeEnum.Review.GetDisplayValue()
+                            </button>
+                            <button class="@GetButtonClass(InstructionCodeEnum.Approve)" @onclick="() => HandleSelection(InstructionCodeEnum.Approve)">
+                                <span><i class="fa-solid fa-file-circle-check"></i></span>
+                                @InstructionCodeEnum.Approve.GetDisplayValue()
+                            </button>
+                            <button class="@GetButtonClass(InstructionCodeEnum.Signature)" @onclick="() => HandleSelection(InstructionCodeEnum.Signature)">
+                                <span><i class="fa-solid fa-file-signature"></i></span>
+                                @InstructionCodeEnum.Signature.GetDisplayValue()
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 mt-4">
+                            <label class="mb-1">Observaciones<span class="red">* </span><span class="span-gray">(@contadorcarac carateres de 500)</span></label>
+                            <textarea @bind="descriptionInput" class="w-100 custom-textarea" id="DT_Asunto" required placeholder="Informacion del trámite. Máx 500 caracteres" maxlength="500" oninput="@ContarCaracteres"></textarea>
+                        </div>
+                        <div class="row d-flex mt-3 pb-10 justify-content-center">
+                            <div class="col-2 d-flex justify-content-center">
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Aceptar" BtnIcon="fa-solid fa-check" BtnDisabled="isEnableActionButton" BtnOnClick="SelectSendDocument"></ButtonComponent>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

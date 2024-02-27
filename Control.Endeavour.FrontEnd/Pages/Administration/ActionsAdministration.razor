@@ -1,0 +1,72 @@
+﻿@using Control.Endeavour.FrontEnd.Models.Models.Administration.SystemConfiguration.Response
+
+@page "/ActionsAdministration"
+@layout MainLayout;
+
+<ActionsModal @ref="actionsModal" OnChangeData="HandleRefreshGridData"></ActionsModal>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+<div class="row titulo">
+    <div class="col-8">
+        <h1>Parametrización - Acciones de la gestión</h1>
+    </div>
+    <!-- Parte 2: Botón azul alineado a la derecha -->
+    <div class="col-4 text-end">
+        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="ShowModalCreate" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col">
+        <TelerikGrid Data="@actionsDataList" 
+                     Sortable="true"
+                     FilterMode="GridFilterMode.FilterMenu"
+                     Resizable="true"
+                     Reorderable="true"
+                     EditMode="GridEditMode.Popup"
+                     SelectionMode="GridSelectionMode.None">
+            <GridColumns>
+
+                <GridCommandColumn Width="90px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                    <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((ActionsDtoResponse)args.Item))"></GridCommandButton>
+                    <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((ActionsDtoResponse)args.Item))"></GridCommandButton>
+                </GridCommandColumn>
+
+                <GridColumn Field="Name"
+                            Title="Nombre"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="ClassCodeName"
+                            Title="Clase"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="FlowStateName"
+                            Title="Estado de flujo"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="OriginName"
+                            Title="Origen"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="CreateUser"
+                            Title="Usuario grabo"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+                <GridColumn Field="CreateDate"
+                            Title="Fecha grabo"
+                            Width="150px"
+                            Filterable="true"
+                            TextAlign="ColumnTextAlign.Center"
+                            HeaderClass="center-wrap" />
+            </GridColumns>
+        </TelerikGrid>
+    </div>
+</div> 

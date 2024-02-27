@@ -1,0 +1,109 @@
+﻿@page "/City"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.City.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.City.Request
+@layout MainLayout
+@* City *@
+
+<CityModal @ref="modalCity" Country="IdPaises" State="IdDepartamento" OnChangeData="HandleRefreshGridDataAsync"></CityModal>
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Municipios</h1>
+
+        </div>
+    </div>
+</div>
+
+<!-- Parte 3: DropdownList Telerik -->
+
+<div class="row">
+    <div class="col-4">
+
+        <label for="input2" class="selectorBlock--labelDropDown">País: <span class="red">*</span></label>
+        <TelerikDropDownList Data="@PaisesList"
+                             @bind-Value="@IdPaises"
+                             Id="GR_Pais"
+                             TextField="Name"
+                             ValueField="CountryId"
+                             DefaultText="Seleccione un país..."
+                             OnChange="GetState"
+                             Filterable="true"
+                             FilterOperator="StringFilterOperator.Contains">
+        </TelerikDropDownList>
+    </div>
+
+    <div class="col-4">
+
+        <label for="input2" class="selectorBlock--labelDropDown">Seleccione un departamento <span class="red">*</span></label>
+        <TelerikDropDownList Data="@DepartamentosList"
+                             @bind-Value="@IdDepartamento"
+                             Id="GR_Departamento"
+                             TextField="Name"
+                             ValueField="StateId"
+                             DefaultText="Seleccione un departamento..."
+                             OnChange="GetCity"
+                             Enabled="@EnabledDepartamento"
+                             Filterable="true"
+                             FilterOperator="StringFilterOperator.Contains">
+        </TelerikDropDownList>
+
+
+    </div>
+
+    <div class="col-4 text-end px-5">
+        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10 mt-3" BtnType="button" BtnText="Crear" BtnDisabled="isEnabled" BtnOnClick="ShowModalAdd" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+    </div>
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+
+            <TelerikGrid Data="CiudadList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit(args.Item as CityDtoResponse))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete(args.Item as CityDtoResponse))"></GridCommandButton>
+                    </GridCommandColumn>
+                    
+                    <GridColumn Field="CodeNum"
+                                Title="Codigo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CodeTxt"
+                                Title="Diminutivo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+
+
+
+                </GridColumns>
+                <NoDataTemplate>
+                    <strong>No Data available / The data is still loading...</strong>
+                </NoDataTemplate>
+            </TelerikGrid>
+        </div>
+    </div>
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    <NotificationsComponentModal @ref="notificationModalSucces"></NotificationsComponentModal>
+    <PaginationComponent @ref="paginationComponetPost" Valid="true" ObjectMeta="meta" T="CityDtoResponse" M="CityDtoRequest" Headers="@StateHeader" OnGetPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+</div>
+
+
+

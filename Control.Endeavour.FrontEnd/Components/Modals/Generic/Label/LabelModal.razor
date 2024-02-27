@@ -1,0 +1,74 @@
+﻿
+<TelerikWindow Modal=true
+               Resizable=false
+               Width="80%"
+               Height="305px"
+               MaxHeight="90%"
+               Centered="true"
+               Visible="ModalStatus"
+               Draggable="false">
+    <WindowTitle>
+        <div class="row w-100">
+            <div class="col-10">
+                <strong>@RadicadoTitle</strong>
+            </div>
+
+            <div class="col-2 d-flex gap-4 d-flex justify-content-end ">
+                <button class="svg-button">
+                    <img src="../img/vector.svg" @onclick="CloseModal" />
+                </button>
+            </div>
+        </div>
+
+
+
+    </WindowTitle>
+
+
+    <WindowContent >
+
+      @*  <div id="contentToPrint">
+            <!-- Contenido que deseas imprimir -->
+            <div class="contenedor-modal">
+                <div class="row mb-3 contenedor-modal__esquema">
+                    <div class="contenedor-modal__column1">
+                        <img src="../img/logocontrol.svg" alt="Logo-ControlDoc" class="img-fluid" width="80" />
+                    </div>
+                    <div class="contenedor-modal__column2">
+                        <div id="barcode">@CodigoBarras</div>
+                    </div>
+                </div>
+                <div class="row text-Container">
+                    <label><strong>Al contestar cite Radicado:</strong> @FilingNumber <strong>Id:</strong> @DocumentId </label>
+                    <label><strong>Fecha:</strong> @DateTime.Now.ToString("yyyy-mm-dd") <strong>Hora:</strong> @DateTime.Now.ToString("hh:mm:ss") <strong>Destinatario(s):</strong> @Recipients</label>
+                    <label><strong>Correspondencía:</strong> Oficio de @Folios folio(s)</label>
+                    <label><strong>Anexos:</strong> @Annexes</label>
+                </div>
+            </div>
+        </div>*@
+
+        @*<button @onclick="PrintDiv">Imprimir</button>*@
+
+
+        <div class="labelModalContiner">
+            <div class="contenedor-modal">
+                <div class="row mb-3 contenedor-modal__esquema">
+                    <div class="contenedor-modal__column1">
+                        <img src="../img/logocontrol.svg" alt="Logo-ControlDoc" class="img-fluid" width="80"/>
+                    </div>
+                    <div class="contenedor-modal__column2">
+                        <div id="barcode">@CodigoBarras</div>
+                    </div>
+                </div>
+                <div class="row text-Container">
+                    <label><strong>Al contestar cite Radicado:</strong> @FilingNumber <strong>Id:</strong> @DocumentId </label>
+                    <label><strong>Fecha:</strong> @DateTime.Now.ToString("yyyy-mm-dd") <strong>Hora:</strong> @DateTime.Now.ToString("hh:mm:ss") <strong>Destinatario(s):</strong> @Recipients</label>
+                    <label><strong>Correspondencía:</strong> Oficio de @Folios folio(s)</label>
+                    <label><strong>Anexos:</strong> @Annexes</label>
+                </div>
+            </div>
+        </div>
+
+    </WindowContent>
+</TelerikWindow>
+

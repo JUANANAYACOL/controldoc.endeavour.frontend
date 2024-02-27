@@ -1,0 +1,79 @@
+﻿@page "/branchoffice"
+@layout MainLayout;
+
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.BranchOffice.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.BranchOffices
+
+<BranchOfficesModal @ref="modalbranchOffice" OnIdSaved="HandleId" OnChangeData="HandleRefreshGridDataAsync" OnAddressStatus="HandleAddressModal"></BranchOfficesModal>
+<AddressModal @ref="modalAddress" OnStatusChangedMultipleSelection="HandleUserSelectedChanged"></AddressModal>
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-8">
+            <h1>Administración - Sucursales de la Organización</h1>
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="ShowModalCreate" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="@branchOfficesList" PageSize="@meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((BranchOfficesDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((BranchOfficesDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    
+                    <GridColumn Field="Code"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="NameOffice"
+                                Title="Nombre de la Oficina"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Region"
+                                Title="Región"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Territory"
+                                Title="Territorio"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="AddressString"
+                                Title="Dirección"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div> 
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    <PaginationComponent @ref="PaginationComponet" T="BranchOfficesDtoResponse" M="BranchOfficeFilterDtoRequest" Filter="@FilterDtoRequest" ObjectMeta="@meta" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+

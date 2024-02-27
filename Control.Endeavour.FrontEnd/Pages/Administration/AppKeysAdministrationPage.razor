@@ -1,0 +1,104 @@
+﻿@page "/AppKeysAdministration" 
+
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.SystemConfiguration.Response
+@layout MainLayout;
+
+
+<Control.Endeavour.FrontEnd.Components.Modals.SystemConfiguration.AppKeysModal @ref="modalAppKeys" OnChangeData="HandleRefreshGridDatasystemFieldsAsync"></Control.Endeavour.FrontEnd.Components.Modals.SystemConfiguration.AppKeysModal>
+<div class="container-fluid mt-1">
+
+    <div class="row">
+        <div class="@Panel1Class">
+            <div class="row titulo">
+                <h4>Administración - llaves del sistema</h4>
+            </div>
+            <div class="row mt-3">
+                <TelerikGrid Data="LstAppFunctions"
+                             ScrollMode="@GridScrollMode.Scrollable"
+                             Height="680px" RowHeight="60" PageSize="@pageSizeAppFunctions"
+                             Sortable="true">
+                    <GridColumns>
+
+                        <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                            <GridCommandButton Icon="@SvgIcon.Search" OnClick="@((args)=> ShowAppKeys((AppFunctionDtoResponse)args.Item))"></GridCommandButton>
+                        </GridCommandColumn>
+                        <GridColumn Field="FunctionName"
+                                    Title="Nombre"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Description"
+                                    Title="Descripción"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+
+                    </GridColumns>
+                </TelerikGrid>
+
+            </div>
+        </div>
+        <div class="col-md-6 flex-md-column @Panel2Class">
+            <div class="row titulo">
+                <div class="col-md-8">
+                    <h4> Valores de la llave: @FunctionName</h4>
+                </div>
+                <div class="col-md-4 text-end">
+                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+                </div>
+            </div>
+            <div class="row mt-3">
+
+                <TelerikGrid Data="LstAppKeys"
+                             ScrollMode="@GridScrollMode.Scrollable"
+                             Height="680px"
+                             RowHeight="60" PageSize="@pageSizeAppKeys"
+                             Sortable="true">
+                    <GridColumns>
+                        <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                            <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalAppkeys((AppKeysDtoResponse)args.Item))"></GridCommandButton>
+                            <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDeleteAppkeys((AppKeysDtoResponse)args.Item))"></GridCommandButton>
+                        </GridCommandColumn>
+                        <GridColumn Field="KeyName"
+                                    Title="Nombre"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Value1"
+                                    Title="Valor 1"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Value2"
+                                    Title="Valor 2"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Value3"
+                                    Title="Valor 3"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                        <GridColumn Field="Value4"
+                                    Title="Valor 4"
+                                    Width="150px"
+                                    Filterable="true"
+                                    TextAlign="ColumnTextAlign.Center"
+                                    HeaderClass="center-wrap" />
+                    </GridColumns>
+                </TelerikGrid>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose">
+
+</NotificationsComponentModal>

@@ -1,0 +1,31 @@
+﻿
+<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Relacionar Documento" IsVisible="modalStatus" Width="60%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+                <div class="row">
+                    <div class="d-flex flex-column align-items-center mt-4">
+                        <h2>N° de Radicado</h2>
+                        <div class="col-10 mt-3">
+                            <InputModalComponent @bind-InputValue="@nRadicado" IsDisabled="disAbleInput" IsVisible="true" LabelText="" Placeholder="@placeHolder"></InputModalComponent>
+                            @if (nRadicado.Count() > 0)
+                            {
+                                isEnableActionButton = false;
+                            }
+                            else
+                            {
+                                isEnableActionButton = true;
+                            }
+                        </div>
+                        <div class="col-10">
+                            <div class="col mt-3 d-flex justify-content-center">
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Agregar" BtnIcon="fa-solid fa-plus" BtnDisabled="isEnableActionButton" BtnOnClick="SelectDocRelationAsync"></ButtonComponent>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

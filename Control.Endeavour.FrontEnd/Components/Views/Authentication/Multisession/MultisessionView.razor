@@ -1,0 +1,32 @@
+﻿<PageTitle>Multisession</PageTitle>
+
+<EditForm Model="@multisessionDtoRequest" OnValidSubmit="@HandleValidSubmit">
+    <NotificationsComponentModal @ref="NotificationModal"></NotificationsComponentModal>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 form-group mb-4 text-center">
+                <LabelComponent KeyName="Por favor coloque el correo electronico para realizar la validacion de multisession" For="name-field" FontSize="24px" IsBold="true" IsCentered="true" />
+            </div>
+            <div class="col-12 form-group mb-4">
+                <LabelComponent KeyName="Correo" For="name-field" AdditionalClasses="mb-2" />
+                <InputComponent @ref="emailInput" InputType=InputTypeEnum.Email Placeholder="Correo" ErrorMessage="El correo electrónico es requerido." ShowErrors="@formSubEmail" OnChange="validateEmail" />
+            </div>
+        </div>
+        <div class="row button-container mb-4">
+            <div class="col-12 text-center mt-2">
+                <CaptchaComponent @ref="captcha" OnCaptchaEntered="OnCaptchaEntered" />
+            </div>
+        </div>
+        <div class="row button-container">
+            <div class="col-12 text-center mt-2">
+                <button class="btnStyle btnStyle--ligthInLine btnStyle--h50 w-50" type="submit" disabled="@formSubmitted">Enviar</button>
+            </div>
+        </div>
+        <div class="col-12 text-center mt-5 mb-5">
+            <a href="/" class="btn rounded-pill text-white border border-white position-relative" style="background-color: transparent;" onclick="@(() => ReturnLoginAsync())">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+</EditForm>

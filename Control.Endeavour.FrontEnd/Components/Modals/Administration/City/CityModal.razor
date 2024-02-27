@@ -1,0 +1,55 @@
+﻿<TelerikRootComponent>
+
+    <GenericModalComponent Title="Administración - Ciudades" IsVisible="modalStatus" OnModalClosed="HandleModalClosed" Width="50%">
+        <ChildContent>
+
+            <EditForm Model="@cityRequest" OnValidSubmit="HandleValidSubmit">
+
+                <div class="row p-2">
+                    <!-- Parte Izquierda: Input y Label -->
+                    <div class="col-md-6">
+                        <InputModalComponent @ref="inputId" IsRequired="true" IsDisabled="true" InputValue="@IdCity" IsVisible="IsEditForm" LabelText="ID" Placeholder="Número de identificación" FieldType="InputModalTypeEnum.NumbersOnly" />
+                    </div>
+
+                </div>
+
+                <div class="container mt-2">
+                    <div class="row">
+
+                        <div class="row p-2">
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @bind-InputValue="Pais.Name" LabelText="País" IsDisabled="true" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @bind-InputValue="Departamento.Name" IsDisabled="true" LabelText="Departamento" />
+                            </div>
+                        </div>
+
+                        <div class="row p-2">
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputName" @bind-InputValue="cityRequest.Name" IsRequired="true" LabelText="Nombre" Placeholder="Ingrese el nombre" FieldType="InputModalTypeEnum.Name" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputCodeNum" @bind-InputValue="cityRequest.CodeNum" IsRequired="true" IsDisabled="@IsDisabledCode" LabelText="Código" Placeholder="Ingrese el código" FieldType="InputModalTypeEnum.NumbersOnly" />
+                            </div>
+                        </div>
+
+                        <div class="row p-2">
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputCodeTex" @bind-InputValue="cityRequest.CodeTxt" LabelText="Diminutivo" Placeholder="Ingrese el código" FieldType="InputModalTypeEnum.None" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="from-group from-group--margin-top justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="submit" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk"></ButtonComponent>
+                    </div>
+                </div>
+            </EditForm>
+            <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+        </ChildContent>
+    </GenericModalComponent>
+</TelerikRootComponent>

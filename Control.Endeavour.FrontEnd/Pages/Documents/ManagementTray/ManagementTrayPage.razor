@@ -1,0 +1,289 @@
+﻿@page "/ManagementTray"
+@layout MainLayout
+
+<!-- Modales -->
+<ManagementOfProceduresModal @ref="managementOfProcedures" OnChangeData="HandleRefreshData"></ManagementOfProceduresModal>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+<GeneralInformationModal @ref="generalInformation"></GeneralInformationModal>
+<AttachmentTrayModal @ref="attachmentTrayModal" OnStatusChangedAtt="HandleStatusChangedAttachement"></AttachmentTrayModal>
+<AttachmentsModal @ref="attachmentsModal" OnStatusChanged="HandleAttachmentChanged"></AttachmentsModal>
+<PageTitle>ManagementTray</PageTitle>
+<div class="container-fluid mt-1">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-8">
+            <h1>Gestión - Bandeja de gestión</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-7">
+        <div class="row">
+            <!-- Tarjeta 1 -->
+            <div class=" col-md-3 mb-3" @onclick="@((args)=> GetData(DocumentStatusEnum.WithoutProcessingWord))">
+                <!-- Contenido de la tarjeta 1 -->
+                <DynamicCardGestionComponent BorderColor="#AB2222"
+                                             LabelText="@DocumentStatusEnum.WithoutProcessingWord.GetDisplayValue()"
+                                             CardNumber="@Enp"
+                                             CardNumberPercen="@EnpP" />
+            </div>
+            <!-- Tarjeta 2 -->
+            <div class="col-md-3 mb-3" @onclick="@((args)=> GetData(DocumentStatusEnum.InProgressWord))">
+                <!-- Contenido de la tarjeta 2 -->
+                <DynamicCardGestionComponent BorderColor="#EAD519"
+                                             LabelText="@DocumentStatusEnum.InProgressWord.GetDisplayValue()"
+                                             CardNumber="@Etr"
+                                             CardNumberPercen="@EtrP" />
+            </div>
+
+            <!-- Tarjeta 3 -->
+            <div class="col-md-3 mb-3" @onclick="@((args)=> GetData(DocumentStatusEnum.SuccessfullManagementWord))">
+                <!-- Contenido de la tarjeta 4 -->
+                <DynamicCardGestionComponent BorderColor="#82A738"
+                                             LabelText="@DocumentStatusEnum.SuccessfullManagementWord.GetDisplayValue()"
+                                             CardNumber="@Gex"
+                                             CardNumberPercen="@GexP" />
+            </div>
+
+           <!-- Tarjeta 4 -->
+            <div class="col-md-3 mb-3" @onclick="@((args)=> GetData(DocumentStatusEnum.Copy))">
+                <!-- Contenido de la tarjeta 4 -->
+                <DynamicCardGestionComponent BorderColor="#41BAEA"
+                                             LabelText="@DocumentStatusEnum.Copy.GetDisplayValue()"
+                                             CardNumber="@Cop"
+                                             CardNumberPercen="@CopP" />
+            </div>
+
+            <div class="col-md-12 pt-4">
+                <strong class="mt-2 pt-4 texto" @onclick="mostrarModal">Búsqueda por filtros</strong>
+            </div>
+
+            <div class="col-md-4 pt-3">
+                <label class="text">Clase de comunicación</label>
+                <TelerikDropDownList Data="@FormatCL"
+                @bind-Value="@classCodeValue"
+                                     Id="CL_Clase"
+                                     DefaultText="@textClase"
+                                     TextField="Value"
+                                     ValueField="Code"
+                                     Filterable="true"
+                                     FilterOperator="StringFilterOperator.Contains">
+                </TelerikDropDownList>
+            </div>
+
+            <div class="col-md-4 pt-3">
+                <label class="text">Prioridad</label>
+                <TelerikDropDownList Data="@FormatBG"
+                @bind-Value="@prioridadValue"
+                                     Id="GR_Prioridad"
+                                     DefaultText="@textPrio"
+                                     TextField="Value"
+                                     ValueField="Code"
+                                     Filterable="true"
+                                     FilterOperator="StringFilterOperator.Contains">
+                </TelerikDropDownList>
+            </div>
+
+            <div class="col-md-2 pt-3">
+                <div class="pt-4">
+                    <button class="btn btn-primary btn-lg btn-block botones limpiar" type="button" @onclick="Refresh">Limpiar</button>
+                </div>
+            </div>
+
+            <div class=" col-md-2 pt-3">
+                <div class="pt-4">
+                    <button class="btn btn-primary btn-lg btn-block botones guardar" type="submit" @onclick="Search">Buscar</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="pt-2">
+                    <InputModalComponent @ref="IdcontrolInput" @bind-InputValue="idControl" IsDisabled="false" LabelText="IdControl" Placeholder="IdControl" InputType="number" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="pt-2">
+                    <InputModalComponent @ref="NumRadicaInput" @bind-InputValue="numRadicado" IsDisabled="false" LabelText="Número de radicado" Placeholder="Número de radicado" />
+                </div>
+            </div>
+            <div class="col-md-4 pt-3">
+                <div class="row">                   
+                    <div class="col-md-10 pt-4">
+                        <button class="btn btn-primary btn-lg btn-block botones tramite" type="submit" @onclick="OpenModalManagementProceduresTM">Trámite masivo</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-3 pt-2">
+                <label class ="text">Año</label>
+            
+                <TelerikDropDownList Data="@Year"
+                                     @bind-Value="@yearValue"
+                                     Id="DocTypeJ"
+                                     DefaultText="@textYear"
+                                     TextField="nombre"
+                                     ValueField="valor"
+                                     Filterable="true"
+                                     OnChange="cascadingMes"
+                                     FilterOperator="StringFilterOperator.Contains">
+                </TelerikDropDownList>
+            </div>
+            
+            
+            <div class="col-md-3 pt-2">
+                <label class="text">Mes</label>
+               
+                <TelerikDropDownList Data="@Mounth"
+                                     @bind-Value="@mounthValue"
+                                     Id="DocTypeJ"
+                                     DefaultText="@textMes"
+                                     TextField="nombre"
+                                     ValueField="valor"
+                                     Filterable="true"
+                                     Enabled="enabledMes"
+                                     OnChange="cascadingDia"
+                                     FilterOperator="StringFilterOperator.Contains">
+                </TelerikDropDownList>
+            </div>
+
+            <div class="col-md-3 pt-2">
+                <label class="text">Día</label>
+                
+                <TelerikDropDownList Data="@Days"
+                                    @bind-Value="@daysValue"
+                                     Id="DocTypeJ"
+                                     DefaultText="@textDia"
+                                     TextField="nombre"
+                                     ValueField="valor"
+                                     Filterable="true"
+                                     Enabled="enabledDia"
+                                     
+                                     FilterOperator="StringFilterOperator.Contains">
+                </TelerikDropDownList>
+            </div>
+
+            <div class="col-md-3 pt-2">
+                <div class="form-check form-switch switchPosition">
+                    <SwitchComponent @bind-CurrentValue="activeState" TextStateActive="Por fecha de vencimiento" TextStateDisabled="Por fecha de vencimiento" ShowText=false />
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
+    <!--  Dona y cartas -->
+    <div class="col-md-5 pt-0 pt-86">
+        <div class="row">
+            <div class="col-md-12 pt-3">
+                <TelerikChart>
+                    <ChartSeriesItems>
+                        <ChartSeries Type="ChartSeriesType.Donut"
+                                     Data="@Data"
+                                     Field="@nameof(DataCardDtoRequest.Value)"
+                                     CategoryField="@nameof(DataCardDtoRequest.Category)">
+                            <ChartSeriesTooltip Visible="true" Context="item">
+                                <Template>
+                                    @item.Percentage.ToString("P")
+                                </Template>
+                            </ChartSeriesTooltip>
+
+                        </ChartSeries>
+                    </ChartSeriesItems>
+
+                    <ChartLegend Visible=true Position="ChartLegendPosition.Right">
+                    </ChartLegend>
+                </TelerikChart>
+            </div>
+            <div class="col-md-12 d-flex justify-content-center">
+                <strong class="mt-3 textCount">Total de trámites: @Total</strong>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="row col-md-12">
+    <div class="col-md-12">
+        <strong class="mt-2 pt-4 texto">Estado: @Estado</strong>
+    </div>
+    <div class="col-md-12">
+          <TelerikGrid Data="GeneralList" 
+                     PageSize="Meta.PageSize"
+                     Sortable="true"
+                     FilterMode="GridFilterMode.FilterMenu"
+                     Resizable="true"
+                     Reorderable="true"
+                     EditMode="GridEditMode.Popup"
+                     SelectionMode="GridSelectionMode.None">
+            <GridColumns>
+                
+                <GridColumn Width="80px" Visible="activateProcedure">
+                    <HeaderTemplate>
+                        <label> Selección </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var data = (ManagementTrayDtoResponse)context; ;
+                            <TelerikCheckBox @bind-Value="@data!.Selected" OnChange="@(() => ChangeStateManagementTray(data))">
+                            </TelerikCheckBox>
+                        }
+                                
+                    </Template>
+                </GridColumn>
+                <GridCommandColumn Width="90px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                    @{
+                        if (activateProcedure)
+                        {
+                            <GridCommandButton Icon="@SvgIcon.Pencil" title="Tramitar" OnClick="@((args)=> ShowModalManagementProcedure((ManagementTrayDtoResponse)args.Item))"></GridCommandButton>
+                        }
+                    }                   
+                    <GridCommandButton Icon="@SvgIcon.InfoCircle" title="información general" OnClick="@((args)=> ShowModalGeneralInformation((ManagementTrayDtoResponse)args.Item))"></GridCommandButton>
+                    <GridCommandButton Icon="@SvgIcon.FilePdf" title="Descargar PDF"></GridCommandButton>
+                    <GridCommandButton Icon="@SvgIcon.Paperclip" title="Adjuntos" OnClick="@((args)=> ShowModalAttachments((ManagementTrayDtoResponse)args.Item))"></GridCommandButton>
+                </GridCommandColumn>
+                <GridColumn Width="40%">
+                    <HeaderTemplate>
+                        <label> Información general </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var data = (ManagementTrayDtoResponse)context;
+                            <div class="row d-flex align-items-center">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label><b>Radicado:</b> @data?.filingCode</label>
+                                        </div>
+                                        <div class="col-6">
+                                            <label><b>ControlId:</b> @data?.controlId</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label><b>Asunto:</b> @data?.docDescription</label>
+                                    </div>
+                                    <div class="row">
+                                        <label><b>Firmante(s):</b> @data?.documentSignatories</label>
+                                    </div>
+                                    <div class="row">
+                                        <label><b>Destinatario(s):</b> @data?.documentReceivers</label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field="docDate" Title="Fecha radicación" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                <GridColumn Field="dueDate" Title="Fecha de vencimiento" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />             
+                
+            </GridColumns>
+        </TelerikGrid>   
+
+    </div>
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    <PaginationComponent @ref="PaginationComponet" T="ManagementTrayDtoResponse" M="ManagementTrayFylterDtoRequest" Filter="@FilterDtoRequest" ObjectMeta="@Meta" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+</div>
+

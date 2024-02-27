@@ -1,0 +1,116 @@
+﻿@page "/AdministrativeUnit"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministrativeUnit.Request
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministrativeUnit.Response
+@layout MainLayout;
+
+<div class="container-fluid mt-5">
+    <AdministrativeUnitModal @ref="modalAdministrativeUnit" IDVersion="IdDocumental" OnStatusChanged="HandleStatusChanged" OnStatusUpdate="HandleChangedData"></AdministrativeUnitModal>
+    
+    <GenericSearchModal OnStatusUserChanged="HandleUserSelectedChanged" @ref="userSearchModal"
+                        ConfigurationInUse="1"
+                        multipleSelection=false
+                        showCopiesColumn=false
+   Title="Administración - Unidades Administrativas - Buscador de usuarios"></GenericSearchModal>
+
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Unidades Administrativas</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnDisabled="@isEnabled" BtnOnClick="ShowModalCreate" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+    <div class="input-container">
+        <label for="input2">Seleccione una Versión Documental*</label>
+    </div>
+
+    <div class="input-container">
+        <TelerikDropDownList Data="@documentalVersionsList"
+                             ValueField="DocumentalVersionId"
+                             DefaultText="Versiones documentales"
+                             Filterable="true"
+                             Value="@IdDocumental"
+                             TextField="Name"
+                             ValueChanged="@( (int newValue) => OnDropDownValueChanged(newValue) )">
+        </TelerikDropDownList>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="@administrativeUnitList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Title="Editar" Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit((AdministrativeUnitsDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Title="Eliminar" Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete((AdministrativeUnitsDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field="AdministrativeUnitId"
+                                Title="ID"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Code"
+                                Title="Código"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Name"
+                                Title="Nombre de la Oficina"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ActiveState"
+                                Title="Estado"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CreateUser"
+                                Title="Usuario Grabo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="CreateDate"
+                                Title="Fecha Grabo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="DocumentalVersionId"
+                                Title="TRD Versión"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    @if (dataChargue)
+    {
+        <PaginationComponent @ref="paginationComponetPost" T="AdministrativeUnitsDtoResponse" M="AdministrativeUnitFilterDtoRequest" Filter="@administrativeUnitFilter" ObjectMeta="@metaAdministrativeUnits" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+
+    
+
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+

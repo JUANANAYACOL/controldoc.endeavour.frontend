@@ -1,0 +1,196 @@
+﻿<div class="my-modal">
+
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Edición / Creación de Metadatos" IsVisible="modalStatus" OnModalClosed="HandleModalClosed" width="60%">
+            <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+            <GenericSearchModal @ref="serachModal" OnStatusMultipleUsersChanged="HandleUsersSelected" OnStatusThirdPartyChanged="HandleThirdPartySelected" hasEmailThirdUsers="true" hasEmailUsers="true" multipleSelection="multipleSelection" ConfigurationInUse="configurationInUse" Title="Comunicaciones -  Radicación de comunicación recibida "></GenericSearchModal>
+
+
+            <div class="row mb-2">
+
+                <div class="col-lg-12 mb-2">
+
+
+                    <label>METADATO: <label> @metaDataSelected.NameMetaField</label> </label>
+                </div>
+
+                <div class="col-lg-12 mb-2">
+                    <label>TIPO DATO: <label> @metaDataSelected.FieldTypeValue</label> </label>
+                </div>
+
+                <div class="col-lg-12 mb-2 d-flex @showPanelNumber">
+
+
+                    @*Tipo numerico*@
+                    <div class="col">
+                        <InputModalComponent @bind-InputValue="MetaDataValue" IsRequired="true" LabelText="Valor MetaDato: " IsVisible="true" Placeholder="" InputType="number" />
+                    </div>
+
+
+                </div>
+
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelAlphaNumeric">
+                    @*Tipo AlfaNumerico*@
+                    <div class="col">
+                        <label class="mb-2">Valor MetaDato: <span style="color:gray">(@CharacterCounter carateres de 50)</span> <span class="red">*</span>  </label>
+                        <textarea @bind="@MetaDataValue" class="w-100 custom-textarea" placeholder="Información del tramite. Máx 50 caracteres" required maxlength="50" @oninput="CountCharacters"></textarea>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelUser">
+                    @*Tipo Funcionarios*@
+                    <div class="col">
+                        <ButtonGroupComponent LabelText="Valor MetaDato:" InputPlaceholder="Agregar Funcionarios" BtnTitle="" @ref="inputModal" @bind-InputValue="MetaDataValue" InputRequired="false" BtnClassColor="btnStyle--primary" BtnClassModifiers="" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="@(()=>openSerachModal(1) )"></ButtonGroupComponent>
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelThirdParty">
+                    @*Tipo Terceros*@
+                    <div class="col">
+
+                        <ButtonGroupComponent LabelText="Valor MetaDato:" InputPlaceholder="Agregar tercero" BtnTitle="" @ref="inputModal" @bind-InputValue="MetaDataValue" InputRequired="false" BtnClassColor="btnStyle--primary" BtnClassModifiers="" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="@(()=>openSerachModal(2) )"></ButtonGroupComponent>
+
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelList">
+                    @*Tipo AlfaNumerico*@
+                    <div class="col">
+
+                        <TelerikDropDownList Data="@metaValues"
+                                             ValueField="ValueText"
+                                             Value="selectedDropDown"
+                                             TextField="ValueText"
+                                             ValueChanged="@((string newValue) => OnDropDownValueChanged(newValue))">
+
+                        </TelerikDropDownList>
+
+                    </div>
+
+
+                </div>
+
+
+
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelDate">
+                    @*Tipo Fecha*@
+                    <div class="col">
+                        <label class="mb-2">Valor MetaDato:  <span class="red">*</span></label>
+                        <TelerikDatePicker @bind-Value="@date"
+                                           Format="MM/dd/yyyy"
+                                           ShowWeekNumbers="false"
+                                           Max="@maxValueTo"
+                                           Min="@minValueTo">
+                        </TelerikDatePicker>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-12 mb-2 d-flex  @showPanelBool">
+                    @*Tipo Switch*@
+                    <label class="mb-2">Valor MetaDato:  <span class="red">*</span></label>
+                    <label class="ms-3"><TelerikSwitch @bind-Value="@isActive" Class="me-2" /> @(isActive ? "Activo" : "Inactivo")</label>
+
+                </div>
+
+
+
+
+
+
+            </div>
+
+            <div class="row mt-5  d-flex  @showPanelUser">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>Acción</th>
+                            <th>Nombre</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in usersList)
+                        {
+                            <tr>
+                                <td class="center-item">
+                                    <img src="../img/deleteIcon.svg" alt="Delete Icon" style="width: 20px; height: 20px; cursor: pointer;" onclick="@(()=>DeleteToList(user))" />
+                                </td>
+                                <td class="align-items-center" style="word-break: break-word;">
+                                    <span>@user.FullName</span>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+            <div class="row mt-5 text-center">
+
+
+                <div class="col-lg-3">
+
+                    <TelerikCheckBox Value="complete" ValueChanged="@((bool newValue) =>HandleCheckBoxes(newValue,1))"></TelerikCheckBox>
+                    <label>Completo</label>
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <TelerikCheckBox Value="absent" ValueChanged="@((bool newValue) =>HandleCheckBoxes(newValue,2))"></TelerikCheckBox>
+                    <label>Ausente</label>
+                </div>
+
+                <div class="col-lg-3">
+                    <TelerikCheckBox Value="incomplete" ValueChanged="@((bool newValue) =>HandleCheckBoxes(newValue,3))"></TelerikCheckBox>
+                    <label>Incompleto</label>
+                </div>
+
+                <div class="col-lg-3">
+                    <TelerikCheckBox Value="none" ValueChanged="@((bool newValue) =>HandleCheckBoxes(newValue,4))"></TelerikCheckBox>
+                    <label>No Aplica</label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="from-group from-group--margin-top justify-content-center">
+
+                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                    <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="HandleValidSubmit"></ButtonComponent>
+                </div>
+            </div>
+
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

@@ -1,0 +1,463 @@
+﻿@page "/Filing/{FilingClass}"
+@layout MainLayout
+<!--Filing/{FilingClass}-->
+
+<GenericDocTypologySearchModal @ref="DocTypologySearchModal" title="Comunicaciones - Radicación de comunicación recibida" OnStatusChanged="HandleTRDSelectedChanged"></GenericDocTypologySearchModal>
+<AttachmentsModal @ref="ModalAttachments" Type="Filing" OnStatusChanged="HandleAttachments"></AttachmentsModal>
+<NotificationsComponentModal @ref="notificationModal"></NotificationsComponentModal>
+<GenericSearchModal @ref="GenericSearchModal" OnStatusChangeRadication="HandleRadicationChanged" ConfigurationInUse="configuration" Title=@title multipleSelection="multipleSelection" showCopiesColumn="false" OnStatusMultipleUsersChanged="HandleUsersMetaDataSelected" OnStatusThirdPartyChanged="HandleThirdPartyMetaDataSelected"></GenericSearchModal>
+<MetaDataRelationModal @ref="metaDataRelationModal" OnMetaDataSelected="HandleMetaDataSelected" OnMetaDataUpdated="HandleMetaDataUpdated"></MetaDataRelationModal>
+<MetaDataValueModal @ref="metaDataValueModal" OnStatusChanged="HandleMetaDataRelationSelected" ConfigurationToUse="HandleSerachModalToUse"></MetaDataValueModal>
+<LabelModal @ref="LabelModal" OnModalClosed="HandleModalClosed"></LabelModal>
+
+@*<ModalUploadPDF @ref="cargarImagen"></ModalUploadPDF>*@
+
+@if (true)
+{
+    var fil = FilingClass;
+}
+
+<div class="container-fluid mt-1">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-8">
+            <h3>Radicación - Radicación de comunicación recibida</h3>
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-4 text-end">
+            @* <button class="btn btn-primary btn-lg btn-block" @onclick="mostrarModal">Crear</button> *@
+        </div>
+    </div>
+
+    <!-- Parte 3: GR = Gestión de Radicación-->
+    <div class="row mt-2 d-flex justify-content-center">
+
+        <!-- Parte 4: GR - Paso 1-->
+        <div id="panel-1" class="row pb-30 justify-content-center @panel_1">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>1</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-8">
+                    <label class="mb-2">Medio de recepción de la comunicación: <span class="red">*</span></label>
+
+                    <TelerikDropDownList Data="@lstReceptionCode"
+                                         Value="@ReceptionCode"
+                                         Id="GR_ReceptionCode"
+                                         DefaultText="Seleccione un tipo de documento..."
+                                         TextField="Value"
+                                         ValueField="Code"
+                                         Filterable="true"
+                                         ValueChanged="@((string Value) => ActivarPanel(Value,"TIPODOCUMENTO", 1))"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-4">
+                    <label class="mb-2">Prioridad: </label>
+                    <TelerikDropDownList Data="@lstPriorityCode"
+                                         Value="@PriorityCode"
+                                         Id="GR_PriorityCode"
+                                         DefaultText="Seleccione una prioridad..."
+                                         TextField="Value"
+                                         ValueField="Code"
+                                         Filterable="true"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-8 mt-2">
+                    <div class="cuadro-info">
+                        <InputModalComponent @bind-InputValue="TRDSelected.TypologyName" IsDisabled="true" IsVisible="true" LabelText="Asignación automática del trámite a gestores: " Placeholder="Información general" MethodValueChanged="@((string Value) => ActivarPanel(Value,"TRAMITEGESTOR", 1))" />
+                    </div>
+                </div>
+                <div class="col-lg-4 d-flex flex-column-reverse">
+                    <div>
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Buscar en TRD" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="showModal" BtnDisabled="@DisableButtons"></ButtonComponent>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Parte 5: GR - Paso 2-->
+        <div id="panel-2" class="row mt-2 pb-30 @panel_2">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>2</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-4">
+                    <label class="mb-2">País: <span class="red">*</span></label>
+                    <TelerikDropDownList Data="@lstCountryId"
+                                         Value="@CountryId"
+                                         Id="GR_Pais"
+                                         TextField="Name"
+                                         ValueField="CountryId"
+                                         DefaultText="Seleccione un país..."
+                                         OnChange="GetState"
+                                         Filterable="true"
+                                         ValueChanged="@((int Value) => ActivarPanel(Value.ToString(),"PAIS", 2))"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-4">
+                    <label class="mb-2">Departamento: <span class="red">*</span></label>
+                    <TelerikDropDownList Data="@lstStateId"
+                                         Value="@StateId"
+                                         Id="GR_Departamento"
+                                         TextField="Name"
+                                         ValueField="StateId"
+                                         DefaultText="Seleccione un departamento..."
+                                         OnChange="GetCity"
+                                         Enabled="@EnabledDepartamento"
+                                         Filterable="true"
+                                         ValueChanged="@((int Value) => ActivarPanel(Value.ToString(),"DEPARTAMENTO", 2))"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-4">
+                    <label class="mb-2">Municipio: <span class="red">*</span></label>
+                    <TelerikDropDownList Data="@lstCityId"
+                                         Value="@CityId"
+                                         Id="GR_Municipio"
+                                         DefaultText="Seleccione un municipio..."
+                                         TextField="Name"
+                                         ValueField="CityId"
+                                         Enabled="@EnabledMunicipio"
+                                         Filterable="true"
+                                         ValueChanged="@((int Value) => ActivarPanel(Value.ToString(),"MUNICIPIO", 2))"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <label class="mb-2">Fecha Documento: <span class="red">*</span></label>
+                    <TelerikDatePicker @bind-Value="DueDate"
+                                       Id="GR_FechaDocumento"
+                                       Format="dd MMMM yyyy"
+                                       Min="@Min" Max="@Max">
+                    </TelerikDatePicker>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <div class="cuadro-info">
+                        <InputModalComponent @bind-InputValue="GuideNumber" LabelText="N° de Guía / Código Postal:" Placeholder="" />
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <div class="cuadro-info">
+                        <InputModalComponent @bind-InputValue="Pages" IsRequired="true" LabelText="Folios: " IsVisible="true" Placeholder="" MethodValueChanged="@((string Value) => ActivarPanel(Value,"FOLIOS", 2))" InputType="number" />
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <div class="cuadro-info">
+                        <InputModalComponent @bind-InputValue="InternalDocument" LabelText="N° Documento Interno: " IsVisible="true" Placeholder="" InputType="number" />
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <label class="mb-2">Notificación: </label>
+                    <TelerikDropDownList Data="@lstNotificacion"
+                    @bind-Value="@ValueNotificacion"
+                                         Id="GR_Notificacion"
+                                         DefaultText="Seleccione una notificacion..."
+                                         TextField="Value"
+                                         ValueField="Code"
+                                         Filterable="true"
+                                         FilterOperator="StringFilterOperator.Contains">
+                    </TelerikDropDownList>
+                </div>
+                <div class="col-lg-4 mt-2 d-flex justify-content-start align-items-center">
+                    <div class="row w-100">
+                        <div class="col-lg-3" style="width:72px; cursor:pointer;">
+                            <a @onclick="showModalMetadatos"> <img src="../img/metadatosIcon.svg" alt="Icon de Metadatos" class="navbar-logo" width="60" height="60" /> </a>
+                        </div>
+                        <div class="col-lg-9">
+                            <label class="mb-0">Metadatos: @*<span class="red">*</span>*@ </label>
+                            <label class="noti-1">Si es necesario ingrese al menos un metadato para continuar </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 mt-2">
+                    <label class="mb-2">Asunto: <span style="color:gray">(@contadorcarac carateres de 500)</span> <span class="red">*</span></label>
+                    <textarea @bind="DocDescription" class="w-100 custom-textarea" id="GR_Asunto" placeholder="" required maxlength="500" @oninput="ContarCaracteres"></textarea>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Parte 6: GR - Paso 3-->
+        <div id="panel-3" class="row pb-40 @panel_3">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>3</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="row">
+                    <h5 class="mb-0">Cargar adjuntos</h5>
+                    <label class="noti-2"> La carga de adjuntos/anexos es opcional. Si considera que es relevante para la radicación, por favor, cárguelos a continuación:</label>
+                    <div class="col-lg-4 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Adjuntos/Anexos" BtnIcon="fa-solid fa-upload" BtnOnClick="showModalAttachments" BtnDisabled="@DisableButtons"></ButtonComponent>
+                    </div>
+
+                    <div class="col-lg-12 @TablaAdjuntos" id="tableAttachments" style="margin-top:31px;">
+                        <div class="table-responsive custom-table-container">
+                            <table class="table custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>@*<img src="../img/carbonDocumentAdd.svg" alt="Upload file" style="cursor:pointer; width: 25px; height: 25px;" />*@</th>
+                                        <th>Detalle</th>
+                                        <th>Archivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var fileInfo in lstFileInfoData)
+                                    {
+                                        <tr>
+                                            <td class="center-item">
+                                                <img src="../img/deleteIcon.svg" alt="Delete Icon" style="width: 20px; height: 20px; cursor: pointer;" />
+                                            </td>
+                                            <td class="align-items-center" style="word-break: break-word;">
+                                                <span>@fileInfo.Description</span>
+                                            </td>
+                                            <td class="center-item">
+                                                <i class="@fileInfo.IconPath" style="font-size: 20px;"></i>
+                                                <span>@fileInfo.Name@fileInfo.Extension</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Parte 7: GR - Paso 4-->
+        <div id="panel-4" class="row pb-40 @panel_4">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>4</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="row">
+                    <h5 class="mb-0">Remitente(s) y destinatario(s)</h5>
+                    <label class="noti-2"> Debe ingresar por lo menos un remitente y un destinatario para continuar, por favor, cárguelos a continuación:</label>
+                    <div class="col-lg-4 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Agregar" BtnIcon="fa-solid fa-users" BtnOnClick="showRecipient" BtnDisabled="@DisableButtons"></ButtonComponent>
+
+                    </div>
+
+                    <div class="col-lg-12 @TablaUsers" id="tableUsers" style="margin-top:31px;">
+                        <div class="table-responsive custom-table-container custom-table--users">
+                            <table class="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th>Remitente</th>
+                                        <th>Destinatario</th>
+                                        <th>Copias</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="center-item table-users">
+                                            @foreach (var sender in listSender)
+                                            {
+                                                <div class="row table-users__recipient">
+                                                    <div class="col-lg-2 table-users__recipient__icon">
+                                                        <img src="../img/deleteIcon.svg" alt="Delete Icon" title="Eliminar Usuario" @onclick="() => RemoverUser(sender.Id, sender.TypeOfPersonInRadication)" />
+                                                    </div>
+                                                    <div class="col-lg-10 text-center">
+                                                        <span class="d-block">@sender.FullName</span>
+                                                        <span class="table-users__charge">@sender.Charge</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="align-items-center table-users">
+                                            @foreach (var recipient in listRecipient)
+                                            {
+                                                <div class="row table-users__recipient">
+                                                    <div class="col-lg-2 table-users__recipient__icon">
+                                                        <img src="../img/deleteIcon.svg" alt="Delete Icon" title="Eliminar Usuario" @onclick="() => RemoverUser(recipient.Id, recipient.TypeOfPersonInRadication)" />
+                                                    </div>
+                                                    <div class="col-lg-10 text-center">
+                                                        <span class="d-block">@recipient.FullName</span>
+                                                        <span class="table-users__charge">@recipient.Charge</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="center-item table-users table-users--end">
+                                            @foreach (var copy in listCopy)
+                                            {
+                                                <div class="row table-users__recipient">
+                                                    <div class="col-lg-2 table-users__recipient__icon">
+                                                        <img src="../img/deleteIcon.svg" alt="Delete Icon" title="Eliminar Usuario" @onclick="() => RemoverUser(copy.Id, copy.TypeOfPersonInRadication)" />
+                                                    </div>
+                                                    <div class="col-lg-10 text-center">
+                                                        <span class="d-block">@copy.FullName</span>
+                                                        <span class="table-users__charge">@copy.Charge</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Parte 8: GR - Paso 5-->
+        <div id="panel-5" class="row pb-40 @panel_5">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>5</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-4">
+                    <h5 class="mb-0">Generar radicado</h5>
+                    <label class="noti-2">Número de radicado:</label>
+                    <div class="col-lg-12 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Radicar" BtnIcon="fa-solid fa-paper-plane" BtnOnClick="HandleFormCreate" BtnDisabled="@DisableButtons"></ButtonComponent>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-lg-4">
+                            <h3 class="mb-0 titulo-azul">Radicado:</h3>
+                            <h5 class="mb-0">ID Documento:</h5>
+                            <label class="noti-2">Año:</label>
+                        </div>
+                        <div class="col-lg-8">
+                            <h3 class="mb-0 titulo-azul">@Radicado</h3>
+                            <h5 class="mb-0">@IdDocumento</h5>
+                            <label class="noti-2">@Anio</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Parte 9: GR - Paso 6-->
+        <div id="panel-6" class="row pb-40 @panel_6">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>6</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-12">
+                    <h5 class="mb-0">Generar rótulo</h5>
+                    <label class="noti-2">Visualizar y descargar rótulo</label>
+                    <div class="col-lg-12 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Rótulo" BtnIcon="fa-solid fa-barcode" BtnOnClick="showModalLabel"></ButtonComponent>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Parte 10: GR - Paso 7-->
+        <div id="panel-7" class="row pb-40 @panel_7">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>7</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-12">
+                    <h5 class="mb-0">Subir imagen</h5>
+                    <label class="noti-2">Subir archivo PDF al repositorio Central</label>
+                    <div class="col-lg-12 mt-2">
+                        <button class="btnStyle btnStyle--primary" type="button" @onclick="showModalUploaPDF">Cargar Archivo</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+     @*   <div id="panel-8" class="row pb-40 @panel_8">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>8</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-12">
+                    <h5 class="mb-0">Enviar confirmación</h5>
+                    <label class="noti-2">Enviar radicación por correo electrónico</label>
+                    <div class="col-lg-12 mt-2">
+                        <button class="btnStyle btnStyle--primary" type="button">Enviar</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>*@
+
+        <!-- Parte 11: GR - Paso 8-->
+        <div id="panel-9" class="row pb-40 @panel_8">
+
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="numero"><h2>8</h2></div>
+            </div>
+
+            <div class="row col-lg-11">
+
+                <div class="col-lg-4">
+                    <h5 class="mb-0">Enlazar documentos</h5>
+                    <label class="noti-2">Enlazar el radicado actual con un documento ya existente</label>
+                    <div class="col-lg-12 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnDisabled="true" BtnText="Enlaces" BtnIcon="fa-solid fa-link" BtnOnClick="(() => SubsequentProcesses(1))"></ButtonComponent>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="mb-0">Crear nueva radicación</h5>
+                    <label class="noti-2">Limpiar el registro de la radicación enviada y realizar una nueva radicación</label>
+                    <div class="col-lg-12 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Nuevo" BtnIcon="fa-solid fa-file-circle-plus" BtnOnClick="(() => SubsequentProcesses(2))"></ButtonComponent>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="mb-0">Mantener datos</h5>
+                    <label class="noti-2">Realizar una nueva radicación con los datos ingresados hasta el paso 2</label>
+                    <div class="col-lg-12 mt-2">
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnType="button" BtnText="Mantener" BtnIcon="fa-solid fa-arrow-up-short-wide" BtnOnClick="(() => SubsequentProcesses(3))"></ButtonComponent>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+

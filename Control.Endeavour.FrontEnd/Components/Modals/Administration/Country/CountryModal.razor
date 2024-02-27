@@ -1,0 +1,48 @@
+﻿
+<TelerikRootComponent>
+    <GenericModalComponent Title="Administración - Paises" IsVisible="modalStatus" OnModalClosed="HandleModalClosed" Width="50%">
+        <ChildContent>
+            <EditForm Model="@countryRequest" OnValidSubmit="HandleValidSubmit">
+                <div class="row p-2">
+                    <!-- Parte Izquierda: Input y Label -->
+                    <div class="col-md-4">
+                        <InputModalComponent @ref="inputId" IsRequired="true" IsVisible="IsEditForm" IsDisabled="true" InputValue="@IdCountry" LabelText="Número de identificación" Placeholder="Número de identificación" FieldType="InputModalTypeEnum.NumbersOnly" />
+                    </div>
+                </div>
+
+                <div class="container mt-2">
+                    <div class="row">
+                        <!-- Primera fila -->
+                        <div class="row p-2">
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputCodeNum" @bind-InputValue="countryRequest.CodeNum" IsRequired="true" IsDisabled="@IsDisabledCode" LabelText="Código internacional" Placeholder="Ingrese el código" FieldType="InputModalTypeEnum.NumbersOnly" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputName" @bind-InputValue="countryRequest.Name" IsRequired="true" LabelText="Nombre del País" Placeholder="Ingrese el nombre" FieldType="InputModalTypeEnum.Name" />
+                            </div>
+                        </div>
+
+                        <div class="row p-2">
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputCodeTex" @bind-InputValue="countryRequest.CodeTxt" LabelText="Código Texto" Placeholder="Ingrese el código" FieldType="InputModalTypeEnum.None" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <InputModalComponent @ref="inputCodeLanguage" @bind-InputValue="countryRequest.CodeLanguage" IsRequired="true" LabelText="Código Lenguaje" Placeholder="Ingrese el código del lenguaje" FieldType="InputModalTypeEnum.None" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="from-group from-group--margin-top justify-content-center">
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="submit" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk"></ButtonComponent>
+                    </div>
+                </div>
+            </EditForm>
+            <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+        </ChildContent>
+    </GenericModalComponent>
+</TelerikRootComponent>
+
+

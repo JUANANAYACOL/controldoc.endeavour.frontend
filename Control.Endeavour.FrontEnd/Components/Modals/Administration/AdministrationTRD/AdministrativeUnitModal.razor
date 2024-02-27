@@ -1,0 +1,59 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Administración - Unidades Administrativas" IsVisible="@modalStatus" Width="65%" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+                <EditForm Model="@adminUnitDtoResponse" OnValidSubmit="HandleValidSubmit">
+                   
+                    <div class="row p-2">
+                        <!-- Parte Izquierda: Input y Label -->
+                        <div class="col-md-6">
+                            <InputModalComponent IsDisabled=true LabelText="Versión documental" Placeholder="@Text" />
+                        </div>
+                        <div class="col-md-6 mt-4 ">
+                            <div class="from-group mt-3 d-flex align-items-end justify-content-end">
+                                <div class="px-2">
+                                    <TelerikSwitch @bind-Value="@activeState" />
+                                </div>
+                                <div class="px-2">
+                                    @(activeState ? "Activo" : "Inactivo")
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-md-2 mb-2">
+                            <InputModalComponent IsRequired="true" LabelText="Código:" IsDisabled="@IsDisabledCode" Placeholder="Ingrese el Código" @bind-InputValue="@adminUnitDtoResponse.Code" FieldType="InputModalTypeEnum.Code" @ref="codeinput" />
+                        </div>
+                        <div class="col-md-5 mb-2">
+                            <InputModalComponent IsRequired="true" @bind-InputValue="@adminUnitDtoResponse.Name" LabelText="Nombre:" Placeholder="Ingrese el Nombre" FieldType="InputModalTypeEnum.Name" @ref="nameinput" />
+                        </div>
+                        <div class=" col-md-5 mb-2">
+                            <ButtonGroupComponent LabelText="Jefe:" InputPlaceholder="Agregar jefe" BtnTitle="Agregar jefe"  @bind-InputValue="@adminUnitDtoResponse.BossName" InputRequired="true" BtnClassColor="btnStyle--primary"
+                                                  BtnClassModifiers="" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OpenNewModal"></ButtonGroupComponent>
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="mb-2">
+                            @* <InputModalComponent LabelText="Descripción" @bind-InputValue="@adminUnitDtoResponse.Description" FieldType="InputModalTypeEnum.None" Placeholder="Ingrese Descripción" @ref="descriptioninput" /> *@
+                            <label class="mb-2">Descripción: <span style="color:gray">(@CharacterCounter carateres de 200)</span></label>
+                            <textarea @bind="@adminUnitDtoResponse.Description" class="w-100 custom-textarea" id="GR_Asunto" placeholder="" maxlength="200" @oninput="CountCharacters"></textarea>
+                        </div>
+
+
+                    </div>
+                   
+                    <div class="row">
+
+                        <div class="from-group from-group--margin-top justify-content-center">
+                            <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="ResetFormAsync"></ButtonComponent>
+                            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="submit" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk"></ButtonComponent>
+                        </div>
+                    </div>
+                </EditForm>
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

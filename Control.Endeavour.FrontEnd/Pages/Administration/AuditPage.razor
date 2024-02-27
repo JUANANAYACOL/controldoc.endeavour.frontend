@@ -1,0 +1,136 @@
+﻿@page "/Audit"
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Audit.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Audit.Response;
+@layout MainLayout;
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Auditor ControlDoc</h1>
+
+        </div>
+
+    </div>
+
+    <div class="row titulo">
+        <div class="col-lg-3">
+            <InputModalComponent @ref="detailInput" @bind-InputValue="auditFilterDtoRequest.Detail" LabelText="Contiene" Placeholder="Contenido..." />
+        </div>
+        <div class="col-lg-3">
+            <label class="mb-2">Desde</label>
+            <TelerikDatePicker @bind-Value="@auditFilterDtoRequest.From"
+                               Format="MM/dd/yyyy"
+                               ShowWeekNumbers="false">
+
+            </TelerikDatePicker>
+        </div>
+        <div class="col-lg-3">
+            <label class="mb-2">Hasta</label>
+            <TelerikDatePicker @bind-Value="@auditFilterDtoRequest.To"
+                               Format="MM/dd/yyyy"
+                               ShowWeekNumbers="false">
+
+            </TelerikDatePicker>
+        </div>
+        <div class="col-lg-3">
+            <div class="from-group from-group--margin-top justify-content-center">
+
+                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="OnClickReset"></ButtonComponent>
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OnClickSearch"></ButtonComponent>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+
+
+            <TelerikGrid Data="vWLogsAuditDtoBugList" PageSize="meta.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridColumn Field="Date"
+                                Title="Fecha"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="LogType"
+                                Title="Tipo de auditoria"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Ip"
+                                Title="IP"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Script"
+                                Title="Script"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Params"
+                                Title="Parametros"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Method"
+                                Title="Metodo"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Message"
+                                Title="Mensaje"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Detail"
+                                Title="Contenido"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="MessageError"
+                                Title="Mensaje de error"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="ErrorType"
+                                Title="Tipo de Error"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                    <GridColumn Field="Exception"
+                                Title="Excepcion"
+                                Width="150px"
+                                Filterable="true"
+                                TextAlign="ColumnTextAlign.Center"
+                                HeaderClass="center-wrap" />
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+        @if (dataChargue)
+    {
+        <PaginationComponent ObjectMeta="@meta" T="VWLogsAuditDtoBugResponse" M="LogByFilterDtoRequest" Filter="@auditFilterDtoRequest" OnPaginationRefresh="HandlePaginationGrid" ></PaginationComponent>
+    }
+</div>

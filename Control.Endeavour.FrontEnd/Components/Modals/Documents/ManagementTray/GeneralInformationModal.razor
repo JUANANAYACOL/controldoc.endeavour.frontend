@@ -1,0 +1,107 @@
+﻿<TelerikRootComponent>
+    <GenericModalComponent Title="Información general" IsVisible="@modalStatus" Width="90%" OnModalClosed="HandleModalClosed">
+        <ChildContent>
+            
+            <div class="row ml-10 text-sm-center">
+                <div class="col-sm-auto">
+                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2" BtnType="button" BtnText="Flujo de trabajo" BtnIcon="fa-solid fa-list-check" BtnOnClick="ShowWorKFlow"></ButtonComponent>
+                </div>
+                <div class="col-sm-auto">
+                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2" BtnType="button" BtnText="Imagen PDF" BtnIcon="fa-solid fa-file-pdf" BtnOnClick="ShowPdfViewer"></ButtonComponent>
+                </div>
+                <div class="col-sm-auto">
+                    <div class="dropdown">
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2 btn-absolute" BtnType="button" BtnText="Expedientes" BtnIcon="fa-solid fa-clipboard" BtnOnClick="() => ToggleDropdown(ref isDropdownOpen,ref DropdownMenuRecords)"></ButtonComponent>
+                        <ul class="@DropdownMenuRecords" @onmouseout="() => ToggleDropdown(ref isDropdownOpen, ref DropdownMenuRecords)">
+                            <li class="pt-1 pb-1">
+                                <i class="fas fa-solid fa-eye me-2 ml-10"></i>Ver expediente
+                            </li>
+                            <li class="pt-1 pb-1">
+                                <i class="fa-solid fa-window-restore me-2 ml-10"></i>Incluir expediente
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-auto" >
+                    <div class="dropdown">
+                        <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2 btn-absolute" BtnType="button" BtnText="Expedientes" BtnIcon="fa-solid fa-clipboard" BtnOnClick="() => ToggleDropdown(ref isDropdownLoans,ref DropdownMenuLoans)"></ButtonComponent>
+                        <ul class="@DropdownMenuLoans" @onmouseout="() => ToggleDropdown(ref isDropdownLoans, ref DropdownMenuLoans)">
+                            <li class="pt-1 pb-1">
+                                <i class="fas fa-solid fa-eye me-2 ml-10"></i>Ver expediente
+                            </li>
+                            <li class="pt-1 pb-1">
+                                <i class="fa-solid fa-window-restore me-2 ml-10"></i>Incluir expediente
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                    
+                    @*  <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2" BtnType="button" BtnText="Préstamos" BtnIcon="fa-solid fa-hands"></ButtonComponent> *@
+                
+                
+                <div class="col-sm-auto">
+                    <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnClassModifiers="mt-2" BtnType="button" BtnText="Panel de firmas" BtnIcon="fa-solid fa-signature"></ButtonComponent>
+                </div>
+            </div>
+
+            <div class="row ml-10 mt-3">
+                <div class="col-12 @ColTableData mb-2">
+                    <TelerikTabStrip PersistTabContent="true">
+                        <TabStripTab Title="Información del documento">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    @foreach (var item in dataInfoDocument)
+                                    {
+                                        <tr>
+                                            <td><b>@item.Key</b></td>
+                                            <td style="word-break: break-word;">
+                                                @item.Value
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </TabStripTab>
+                        <TabStripTab Title="Información de la TRD">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    @foreach (var item in dataInfoTrd)
+                                    {
+                                        <tr>
+                                            <td><b>@item.Key</b></td>
+                                            <td style="word-break: break-word;">
+                                                @item.Value
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </TabStripTab>
+                    </TelerikTabStrip>
+                </div>
+
+                <div class="col-12 col-md-6 mb-2 @DisplayPdfViewer">
+                    @* <div class="row mb-2 ustify-content-md-end">
+                        <div class="col-6 col-md-6 mb-2">
+                            <button class="btnStyle btnStyle--primary" type="button" @onclick="HidePdfViewer">Ocultar Imagen PDF</button>
+                        </div>
+                    </div> *@
+
+                    <div class="row">
+                        <TelerikPdfViewer @ref="@PdfViewerRef"
+                                          Width="100%"
+                                          Height="100vh"
+                                          Data="@FileData">
+                        </TelerikPdfViewer>
+                    </div>
+                </div>
+
+            </div>
+        </ChildContent>
+    </GenericModalComponent>
+</TelerikRootComponent>
+
+<WorKFlowModal @ref="worKFlowModal"></WorKFlowModal>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+@* <ModalAssociatedDocuments @ref="modalAssociatedDocuments" OnStatusChangedJoinDoc="HandleStatusChangedJOINDOC"></ModalAssociatedDocuments>  *@

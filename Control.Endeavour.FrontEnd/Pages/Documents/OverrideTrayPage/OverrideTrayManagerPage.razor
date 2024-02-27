@@ -1,0 +1,60 @@
+﻿@page "/OverrideTrayManager"
+@using Control.Endeavour.FrontEnd.Models.Models.Documents.OverrideTray.Response
+@using Control.Endeavour.FrontEnd.Models.Models.Documents.OverrideTray.Request
+@layout MainLayout
+
+<OverrideTrayManagerModal @ref="ModalManager" OnChangeData="HandleRefreshGridDataAsync"></OverrideTrayManagerModal>
+
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-8">
+            <h1>Administración - Gestor Anulación</h1>
+
+        </div>
+        <div class="col-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers=" ml-10" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus" BtnDisabled="crear"></ButtonComponent>
+        </div>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+
+    <TelerikGrid Data="ManagerList" PageSize="10"
+                 Sortable="true"
+                 FilterMode="GridFilterMode.FilterMenu"
+                 Resizable="true"
+                 Reorderable="true"
+                 EditMode="GridEditMode.Popup"
+                 SelectionMode="GridSelectionMode.None">
+        <GridColumns>
+            <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+
+                <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> ShowModalEdit(args.Item as OverrideTrayManagerDtoResponse))"></GridCommandButton>
+                <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args)=> ShowModalDelete(args.Item as OverrideTrayManagerDtoResponse))"></GridCommandButton>
+            </GridCommandColumn>
+            
+            <GridColumn Field="NameUser"
+                        Title="Usuario"
+                        Width="150px"
+                        Filterable="true"
+                        TextAlign="ColumnTextAlign.Center"
+                        HeaderClass="center-wrap" />
+            <GridColumn Field="NameTypeCode"
+                        Title="Codigo"
+                        Width="150px"
+                        Filterable="true"
+                        TextAlign="ColumnTextAlign.Center"
+                        HeaderClass="center-wrap" />
+
+
+        </GridColumns>
+        <NoDataTemplate>
+            <strong>No Data available / The data is still loading...</strong>
+        </NoDataTemplate>
+    </TelerikGrid>
+
+    <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+    <NotificationsComponentModal @ref="notificationModalSucces" ></NotificationsComponentModal>
+</div>

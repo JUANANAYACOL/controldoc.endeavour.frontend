@@ -1,0 +1,61 @@
+﻿<div class="my-modal">
+    <TelerikRootComponent>
+
+        <GenericModalComponent Title="Administracion-Motivo Anulacion" IsVisible="modalStatus" OnModalClosed="HandleModalClosed">
+            <ChildContent>
+
+                <div class="row">
+                    <div class="col-md-2 mt-3">
+                        <InputModalComponent @ref="InputId" LabelText="ID" Placeholder="@PHID" IsVisible="true" IsDisabled="true"></InputModalComponent>
+                    </div>
+                    <div class="col-md-10 mt-3">
+                        <InputModalComponent @ref="InputNombre" LabelText="Nombre" Placeholder="@placeHolderDefault" IsVisible="true" @bind-InputValue="@NameReason"></InputModalComponent>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6 mt-3">
+                            <label>Selecciona un motivo..</label>
+                            <TelerikDropDownList Data="@ReasonCodeList"
+                                                 @bind-Value="@ReasonCode"
+                                                 TextField="Value"
+                                                 ValueField="Code"
+                                                 DefaultText="@DTReason"
+                                                 OnChange="GetTypeCode"
+                                                 Filterable="true"
+                                                 FilterOperator="StringFilterOperator.Contains">
+                            </TelerikDropDownList>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label>Selecciona el tipo de usuario..</label>
+
+                            <TelerikDropDownList Data="@TypeCodeList"
+                                                 @bind-Value="@TypeCode"
+                                                 TextField="Value"
+                                                 ValueField="Code"
+                                                 DefaultText="@DTTypeCode"
+                                                 Filterable="true"
+                                                 Enabled="@Habilitar"
+                                                 FilterOperator="StringFilterOperator.Contains">
+                            </TelerikDropDownList>
+
+                        </div>
+                    </div>
+
+
+                    <div class="row align-self-center mt-5">
+                        <div class="col">
+                            <div class="text-center">
+                                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="reset"></ButtonComponent>
+                                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Guardar" BtnIcon="fa-solid fa-floppy-disk" BtnOnClick="Save"></ButtonComponent>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
+
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

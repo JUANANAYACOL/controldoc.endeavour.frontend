@@ -1,0 +1,86 @@
+﻿@using Control.Endeavour.FrontEnd.Models.Models.Administration.MetaData.Request;
+<div class="my-modal">
+
+
+
+    <TelerikRootComponent>
+        <GenericModalComponent Title="Visualización de MetaDatos" IsVisible="modalStatus" OnModalClosed="HandleModalClosed"  width="70%">
+            <ChildContent>
+
+
+                <div class="row mb-5">
+                    <TelerikGrid Data="metaDataList"
+                                 Sortable="true"
+                                 FilterMode="GridFilterMode.FilterMenu"
+                                 Resizable="true"
+                                 ScrollMode=GridScrollMode.Scrollable
+                                 Reorderable="true"
+                                 EditMode="GridEditMode.Popup"
+                                 SelectionMode="GridSelectionMode.None">
+                        <GridColumns>
+
+                            <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                                <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args)=> MetaFieldSelected((MetaDataRelationDtoRequest) args.Item))"></GridCommandButton>
+                            </GridCommandColumn>
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.NameMetaField)
+                                        Title="MetaDato"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.DataText)
+                                        Title="Valor MetaDato"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.FieldTypeValue)
+                                        Title="Tipo de MetaDato"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.ActiveState)
+                                        Title="Estado"
+                                        Width="150px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" >
+
+                                <Template>
+                                    @{
+                                        MetaDataRelationDtoRequest rowData = (MetaDataRelationDtoRequest)context;
+                                        if (rowData != null)
+                                        {
+                                            bool activeState = (bool)rowData.ActiveState!;
+                                            string active = activeState ? "Activo" : "Inactivo";
+                                            @active
+                                        }
+                                    }
+                                </Template>
+                                        
+                                        </GridColumn>
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.CreateUser)
+                                        Title="Usuario Grabó"
+                                        Width="100px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+                            <GridColumn Field=@nameof(MetaDataRelationDtoRequest.CreateDate)
+                                        Title="Fecha Grabó"
+                                        Width="100px"
+                                        Filterable="true"
+                                        TextAlign="ColumnTextAlign.Center"
+                                        HeaderClass="center-wrap" />
+
+                        </GridColumns>
+                    </TelerikGrid>
+
+
+
+                </div>
+
+            </ChildContent>
+        </GenericModalComponent>
+    </TelerikRootComponent>
+</div>

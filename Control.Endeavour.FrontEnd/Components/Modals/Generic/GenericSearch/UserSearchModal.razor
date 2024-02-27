@@ -1,0 +1,158 @@
+﻿@using Control.Endeavour.FrontEnd.Models.Models.Administration.VUser.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.VUser.Response;
+
+
+<div class="my-modal">
+    <div class="row py-4">
+        <div class="col-lg-3">
+            @{
+
+                if (showNameField)
+                {
+                    <InputModalComponent @ref="firstNameInput" @bind-InputValue="vUserRequest.FirstName" IsRequired="false" LabelText="Consultar por nombre" Placeholder="Nombre" />
+                }
+                if (showLastNameField)
+                {
+                    <InputModalComponent @ref="lastNameInput" @bind-InputValue="vUserRequest.LastName" IsRequired="false" LabelText="Consultar por apellido" Placeholder="Apellido" />
+
+                }
+            }
+        </div>
+        <div class="col-lg-3">
+            @{
+                if (showParamTrdDdl)
+                {
+                    <label class="mt-2">Unidad Administrativa </label>
+                    <TelerikDropDownList Data="@administrativeUnitList"
+                                         ValueField="AdministrativeUnitId"
+                                         Value="selectAdministriveUnitId"
+                                         TextField="Name"
+                                         ValueChanged="@((int newValue) => OnChangeUA(newValue))"
+                                         Filterable="true"
+                                         Enabled="isEnableAdministriveUnit"
+                                         DefaultText="Unidad Administrativa"></TelerikDropDownList>
+                }
+
+
+                if (showParamTrdDdl)
+                {
+                    <label class="mt-2">Oficina Productora</label>
+                    <TelerikDropDownList Data="@productionOfficeList"
+                                         ValueField="ProductionOfficeId"
+                                         Value="selectProductionOfficetId"
+                                         TextField="Name"
+                                         ValueChanged="@((int newValue) => OnChangeOP(newValue))"
+                                         Filterable="true"
+                                         Enabled="isEnableProductionOffice"
+                                         DefaultText="Oficina Productora"></TelerikDropDownList>
+
+                }
+
+            }
+        </div>
+        <div class="col-lg-3">
+            @{
+                if (showCarge)
+                {
+                    <label class="mt-2">Cargo</label>
+                    <TelerikDropDownList Data="@chargeList"
+                                         ValueField="Code"
+                                         Value="selectChargeCode"
+                                         TextField="Value"
+                                         ValueChanged="@((string newValue) => OnChangeCh(newValue))"
+                                         Filterable="true"
+                                         Enabled="isEnableCharge"
+                                         DefaultText="Cargo"></TelerikDropDownList>
+                }
+            }
+        </div><div class="col-lg-3">
+            <div class="from-group from-group--margin-top justify-content-center">
+                <ButtonComponent BtnClassColor="btnStyle--primaryInLine" BtnType="button" BtnText="Limpiar" BtnIcon="fa-solid fa-eraser" BtnOnClick="OnClickButtonClear"></ButtonComponent>
+                <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10" BtnType="button" BtnText="Buscar" BtnIcon="fa-solid fa-magnifying-glass" BtnOnClick="OnClickButton"></ButtonComponent>
+            </div>
+        </div>
+    </div> <div class="row">
+        <TelerikGrid Data="@UserList"
+                     PageSize="meta.PageSize"
+                     Sortable="true"
+                     Resizable="true"
+                     ScrollMode="@GridScrollMode.Scrollable"
+                     Height="400px"
+                     Reorderable="true">
+            <GridColumns>
+                <GridColumn  Width="14%" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        @{
+                            if (multipleSelection)
+                            {
+                                <TelerikCheckBox class="mr-1" @bind-Value="@selectAllManager" OnChange="@ChangeAllStateManager">
+                                </TelerikCheckBox>
+                            }
+                            <label> Seleccionar </label>
+                        }
+                    </HeaderTemplate><Template>
+                        @{
+                            var userSelected = (VUserDtoResponse)context;
+                            <TelerikCheckBox @bind-Value="@userSelected!.Selected" OnChange="@(() => ChangeStateManager(userSelected))">
+                            </TelerikCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Visible="@(showCopiesColumn && multipleSelection)" Width="10%" TextAlign="ColumnTextAlign.Center">
+                    <HeaderTemplate>
+                        <TelerikCheckBox @bind-Value="@selectAllCopies" OnChange="@ChangeAllStateCopies">
+                        </TelerikCheckBox>
+                        <label> Copias </label>
+                    </HeaderTemplate>
+                    <Template>
+                        @{
+                            var userCopied = (VUserDtoResponse)context;
+                            <TelerikCheckBox @bind-Value="@userCopied!.Copy" OnChange="@(() =>ChangeStateCopies(userCopied))">
+                            </TelerikCheckBox>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Title="Usuarios">
+                    <Template>
+                        @{
+                            var user = (VUserDtoResponse)context;
+
+                            <div class="row d-flex align-items-center">
+
+                                <div class="col-md-2">
+                                    <TelerikSvgIcon Icon="@SvgIcon.User" Size="@ThemeConstants.SvgIcon.Size.ExtraExtraExtraLarge"></TelerikSvgIcon>
+                                </div>
+
+                                <div class="col">
+                                    <div class="row">
+                                        <label><b>Nombre:</b> @user?.FullName</label>
+                                    </div>
+
+                                    <div class="row">
+                                        <label> <b>Unidad Administrativa:</b> @user?.AdministrativeUnitName</label>
+                                    </div>
+
+                                    <div class="row">
+                                        <label><b>Oficina productora:</b> @user?.ProductionOfficeName</label>
+                                    </div>
+
+                                    <div class="row">
+                                        <label><b>Cargo:</b> @user?.Charge</label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+        </TelerikGrid>
+    </div>
+
+    <!-- Parte 4: Botones en la izquierda, centro y derecha -->
+    @if (dataChargue)
+    {
+        <PaginationComponent ObjectMeta="@meta" T="VUserDtoResponse" M="VUserDtoRequest" Filter="@vUserRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+    }
+</div>
+
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>

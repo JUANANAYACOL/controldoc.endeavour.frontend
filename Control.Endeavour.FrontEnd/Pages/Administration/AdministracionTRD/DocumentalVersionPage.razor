@@ -1,0 +1,83 @@
+﻿@page "/DocumentalVersion"
+@layout MainLayout;
+
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.AdministracionTRD.Response;
+
+<DocumentalVersionModal @ref="modalDocumentalVersion" OnChangeData="HandleRefreshGridData"></DocumentalVersionModal>
+
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-8">
+            <h1>Administración - Versiones Documentales</h1>
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="documentalVersionsList" PageSize="meta!.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" OnClick="@((args) => ShowModalEdit((DocumentalVersionDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" OnClick="@((args) => HandleRecordToDelete((DocumentalVersionDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+                    <GridColumn Field=Name Title="Nombre" Width="100px" Filterable="true" />
+                    <GridColumn Field=Code Title="Código" Width="100px" Filterable="true" />
+                    <GridColumn Field=VersionType Title="Tipo de Version" Width="100px" Filterable="true" />
+                    <GridColumn Field=Description Title="Descripción" Width="100px" Filterable="true" />
+                    <GridColumn Field=StartDate Title="Fecha de Inicio" Width="100px" Filterable="true" />
+                    <GridColumn Field=EndDate Title="Fecha de Fin" Width="100px" Filterable="true" />
+                    <GridColumn Field=FileOrganizationId Title="Organigrama" Width="120px" Filterable="true">
+                        <Template>
+                            @{
+                                DocumentalVersionDtoResponse rowData = (DocumentalVersionDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    int fileOrganizationId = rowData.FileOrganizationId;
+                                    if (fileOrganizationId != 0)
+                                    {
+                                        <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10 btn-block" BtnType="button" BtnText="Descargar" BtnOnClick="(()=>DownloadFile(fileOrganizationId))" BtnIcon="fa-solid fa-download"></ButtonComponent>
+                                    }
+                                    else{
+                                        <span>No tiene Organigrama</span>
+                                    }
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=ActiveState Title="Estado" Width="100px" Filterable="true">
+                        <Template>
+                            @{
+                                DocumentalVersionDtoResponse rowData = (DocumentalVersionDtoResponse)context;
+                                if (rowData != null)
+                                {
+                                    bool activeState = (bool)rowData.ActiveState!;
+                                    string active = activeState ? "Activo" : "Inactivo";
+                                    @active
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </TelerikGrid>
+        </div>
+    </div>
+
+    <PaginationComponent @ref="paginationComponent" ObjectMeta="@meta" T="DocumentalVersionDtoResponse" M="DocumentalVersionFilterDtoRequest" Filter="@filterDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+
+</div>
+
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiCloseAsync"></NotificationsComponentModal>

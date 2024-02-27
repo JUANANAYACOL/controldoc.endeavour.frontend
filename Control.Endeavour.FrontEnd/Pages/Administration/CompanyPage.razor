@@ -1,0 +1,63 @@
+﻿@page "/Company"
+@layout MainLayout;
+
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Company.Request;
+@using Control.Endeavour.FrontEnd.Models.Models.Administration.Company.Response;
+
+
+<CompanyModal @ref="modalCompanies" OnStatusChanged="HandleStatusChanged" OnIdSaved="HandleId" OnResetForm="HandleForm" OnChangeData="HandleRefreshGridData"></CompanyModal>
+<AddressModal @ref="modalAddress" Id="modal-Address" OnStatusChangedMultipleSelection="HandleUserSelectedChanged"></AddressModal>
+
+<div class="container-fluid mt-5">
+    <!-- Parte 1: Título y Contenido alineado a la izquierda -->
+    <div class="row titulo">
+        <div class="col-lg-8">
+            <h1>Administración - Datos de la Organización</h1>
+
+        </div>
+        <!-- Parte 2: Botón azul alineado a la derecha -->
+        <div class="col-lg-4 text-end">
+            <ButtonComponent BtnClassColor="btnStyle--primary" BtnClassModifiers="ml-10  btn-block" BtnType="button" BtnText="Crear" BtnOnClick="ShowModal" BtnIcon="fa-solid fa-plus"></ButtonComponent>
+        </div>
+    </div>
+
+    <!-- Parte 3: Grilla -->
+    <div class="row mt-4">
+        <div class="col">
+            <TelerikGrid Data="CompaniesList" PageSize="meta!.PageSize"
+                         Sortable="true"
+                         FilterMode="GridFilterMode.FilterMenu"
+                         Resizable="true"
+                         Reorderable="true"
+                         EditMode="GridEditMode.Popup"
+                         SelectionMode="GridSelectionMode.None">
+                <GridColumns>
+
+                    <GridCommandColumn Width="80px" Title="Acciones" HeaderClass="center-wrap" Visible="true">
+                        <GridCommandButton Icon="@SvgIcon.Pencil" title="Editar" OnClick="@((args)=> ShowModalEdit((CompanyDtoResponse)args.Item))"></GridCommandButton>
+                        <GridCommandButton Icon="@SvgIcon.Trash" title="Eliminar" OnClick="@((args)=> HandleRecordToDelete((CompanyDtoResponse)args.Item))"></GridCommandButton>
+                    </GridCommandColumn>
+
+                    <GridColumn Field="BusinessName" Title="Razón social" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="Identification" Title="NIT" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="PhoneNumber" Title="Teléfono" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="CellPhoneNumber" Title="Celular" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="Address" Title="Dirección" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="Email" Title="Correo Electrónico" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="WebAddress" Title="Página web" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="CountryName" Title="País" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="StateName" Title="Departamento" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+                    <GridColumn Field="CityName" Title="Municipio" Width="150px" Filterable="true" TextAlign="ColumnTextAlign.Center" HeaderClass="center-wrap" />
+
+
+                </GridColumns>
+            </TelerikGrid>
+
+
+
+        </div>
+    </div>
+
+    <PaginationComponent @ref="PaginationComponent" ObjectMeta="@meta" T="CompanyDtoResponse" M="CompanyCreateDtoRequest" Filter="@companyDtoRequest" OnPaginationRefresh="HandlePaginationGrid"></PaginationComponent>
+</div>
+<NotificationsComponentModal @ref="notificationModal" OnModalClosed="HandleModalNotiClose"></NotificationsComponentModal>
